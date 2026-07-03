@@ -1,0 +1,350 @@
+// =============================================================================
+// ROYAL NOMAD RIDERS CLUB — PRISMA SCHEMA
+// Database: Supabase PostgreSQL (Free Tier)
+// This schema is the single source of truth for the entire application and
+// is shared across every phase of the build. Do not fork or duplicate models.
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// -----------------------------------------------------------------------------
+// ENUMS
+// -----------------------------------------------------------------------------
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  BLOG_AUTHOR
+  MEMBER
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum EventDifficulty {
+  EASY
+  MODERATE
+  CHALLENGING
+  EXTREME
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  WAITLISTED
+  CANCELLED
+}
+
+enum RidingExperience {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  PROFESSIONAL
+}
+
+enum NotificationType {
+  NEW_REGISTRATION
+  NEW_COMMENT
+  BLOG_PUBLISHED
+  EVENT_REMINDER
+  CONTACT_SUBMISSION
+  SYSTEM
+}
+
+enum ContactStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  ARCHIVED
+}
+
+// -----------------------------------------------------------------------------
+// USERS & AUTH
+// User.id mirrors the Supabase `auth.users.id` (UUID). Supabase Auth owns
+// credentials; this table owns application-level profile & role data.
+// -----------------------------------------------------------------------------
+
+model User {
+  id            String   @id @db.Uuid
+  email         String   @unique
+  name          String
+  avatarUrl     String?  @map("avatar_url")
+  role          Role     @default(MEMBER)
+  bio           String?
+  phone         String?
+  instagramHandle String? @map("instagram_handle")
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  blogs         Blog[]
+  comments      Comment[]
+  registrations Registration[]
+  albums        Album[]        @relation("AlbumCreatedBy")
+  galleryImages GalleryImage[] @relation("GalleryUploadedBy")
+  events        Event[]        @relation("EventCreatedBy")
+  notifications Notification[]
+
+  @@map("users")
+}
+
+// -----------------------------------------------------------------------------
+// GALLERY
+// -----------------------------------------------------------------------------
+
+model Album {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  slug        String   @unique
+  description String?
+  coverImageUrl String? @map("cover_image_url")
+  location    String?
+  rideDate    DateTime? @map("ride_date")
+  isFeatured  Boolean  @default(false) @map("is_featured")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdById String   @map("created_by_id") @db.Uuid
+  createdBy   User     @relation("AlbumCreatedBy", fields: [createdById], references: [id])
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  images      GalleryImage[]
+
+  @@index([slug])
+  @@index([isFeatured])
+  @@map("albums")
+}
+
+model GalleryImage {
+  id           String   @id @default(uuid()) @db.Uuid
+  albumId      String   @map("album_id") @db.Uuid
+  album        Album    @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  storagePath  String   @map("storage_path")
+  url          String
+  caption      String?
+  altText      String   @map("alt_text")
+  width        Int?
+  height       Int?
+  sortOrder    Int      @default(0) @map("sort_order")
+  uploadedById String   @map("uploaded_by_id") @db.Uuid
+  uploadedBy   User     @relation("GalleryUploadedBy", fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([albumId])
+  @@map("gallery_images")
+}
+
+// -----------------------------------------------------------------------------
+// BLOG
+// -----------------------------------------------------------------------------
+
+model Category {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @unique
+  slug        String  @unique
+  description String?
+
+  blogs       Blog[]
+
+  @@map("categories")
+}
+
+model Blog {
+  id             String     @id @default(uuid()) @db.Uuid
+  title          String
+  slug           String     @unique
+  excerpt        String
+  content        String     @db.Text
+  coverImageUrl  String     @map("cover_image_url")
+  status         BlogStatus @default(DRAFT)
+  authorId       String     @map("author_id") @db.Uuid
+  author         User       @relation(fields: [authorId], references: [id])
+  categoryId     String?    @map("category_id") @db.Uuid
+  category       Category?  @relation(fields: [categoryId], references: [id])
+  rideDate       DateTime?  @map("ride_date")
+  location       String?
+  motorcycle     String?
+  distanceKm     Int?       @map("distance_km")
+  readingTimeMin Int        @default(5) @map("reading_time_min")
+  viewCount      Int        @default(0) @map("view_count")
+  likeCount      Int        @default(0) @map("like_count")
+  metaTitle      String?    @map("meta_title")
+  metaDescription String?   @map("meta_description")
+  publishedAt    DateTime?  @map("published_at")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  comments       Comment[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([authorId])
+  @@index([categoryId])
+  @@map("blogs")
+}
+
+model Comment {
+  id        String   @id @default(uuid()) @db.Uuid
+  blogId    String   @map("blog_id") @db.Uuid
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  authorId  String   @map("author_id") @db.Uuid
+  author    User     @relation(fields: [authorId], references: [id])
+  content   String   @db.Text
+  parentId  String?  @map("parent_id") @db.Uuid
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   Comment[] @relation("CommentReplies")
+  isApproved Boolean @default(true) @map("is_approved")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([blogId])
+  @@map("comments")
+}
+
+// -----------------------------------------------------------------------------
+// EVENTS & REGISTRATIONS
+// -----------------------------------------------------------------------------
+
+model Event {
+  id              String          @id @default(uuid()) @db.Uuid
+  title           String
+  slug            String          @unique
+  description     String          @db.Text
+  coverImageUrl   String          @map("cover_image_url")
+  destination     String
+  meetingPoint    String          @map("meeting_point")
+  startDate       DateTime        @map("start_date")
+  endDate         DateTime?       @map("end_date")
+  meetingTime     String          @map("meeting_time")
+  difficulty      EventDifficulty @default(MODERATE)
+  distanceKm      Int             @map("distance_km")
+  rideCaptainName String          @map("ride_captain_name")
+  rideCaptainPhone String?        @map("ride_captain_phone")
+  maxSeats        Int             @map("max_seats")
+  status          EventStatus     @default(UPCOMING)
+  registrationOpen Boolean        @default(true) @map("registration_open")
+  isArchived      Boolean         @default(false) @map("is_archived")
+  createdById     String          @map("created_by_id") @db.Uuid
+  createdBy       User            @relation("EventCreatedBy", fields: [createdById], references: [id])
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  registrations   Registration[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([startDate])
+  @@map("events")
+}
+
+model Registration {
+  id                  String              @id @default(uuid()) @db.Uuid
+  eventId             String              @map("event_id") @db.Uuid
+  event               Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId              String?             @map("user_id") @db.Uuid
+  user                User?               @relation(fields: [userId], references: [id])
+
+  // Personal details
+  fullName            String              @map("full_name")
+  email               String
+  phone               String
+  age                 Int
+  bloodGroup          String              @map("blood_group")
+  emergencyContactName String             @map("emergency_contact_name")
+  emergencyContactPhone String            @map("emergency_contact_phone")
+
+  // Motorcycle details
+  motorcycleBrand     String              @map("motorcycle_brand")
+  motorcycleModel     String              @map("motorcycle_model")
+  registrationNumber  String              @map("registration_number")
+  ridingExperience    RidingExperience    @map("riding_experience")
+
+  // Ride gear (checkboxes)
+  hasHelmet           Boolean             @default(false) @map("has_helmet")
+  hasJacket           Boolean             @default(false) @map("has_jacket")
+  hasGloves           Boolean             @default(false) @map("has_gloves")
+  hasBoots            Boolean             @default(false) @map("has_boots")
+  hasKneeGuards       Boolean             @default(false) @map("has_knee_guards")
+
+  // Medical
+  allergies           String?             @db.Text
+  medicalConditions    String?            @db.Text
+
+  agreedToRideResponsibly Boolean         @default(false) @map("agreed_to_ride_responsibly")
+
+  status              RegistrationStatus  @default(PENDING)
+  confirmationEmailSentAt DateTime?       @map("confirmation_email_sent_at")
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
+
+  @@index([eventId])
+  @@index([email])
+  @@index([status])
+  @@map("registrations")
+}
+
+// -----------------------------------------------------------------------------
+// NOTIFICATIONS (admin dashboard activity feed)
+// -----------------------------------------------------------------------------
+
+model Notification {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @map("user_id") @db.Uuid
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean          @default(false) @map("is_read")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+// -----------------------------------------------------------------------------
+// NEWSLETTER & CONTACT
+// -----------------------------------------------------------------------------
+
+model Newsletter {
+  id             String    @id @default(uuid()) @db.Uuid
+  email          String    @unique
+  isSubscribed   Boolean   @default(true) @map("is_subscribed")
+  unsubscribeToken String  @unique @map("unsubscribe_token")
+  subscribedAt   DateTime  @default(now()) @map("subscribed_at")
+  unsubscribedAt DateTime? @map("unsubscribed_at")
+
+  @@map("newsletter_subscribers")
+}
+
+model Contact {
+  id        String        @id @default(uuid()) @db.Uuid
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String        @db.Text
+  status    ContactStatus @default(NEW)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@map("contact_submissions")
+}
