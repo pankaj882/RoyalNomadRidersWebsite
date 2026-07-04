@@ -24,7 +24,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn, getInitials } from "@/lib/utils";
 import { mainNavLinks } from "@/lib/constants";
-import { useAuth } from "@/components/providers/auth-provider";
+import { useAuthState } from "@/components/providers/auth-provider";
 import { useSupabaseAuthListener } from "@/hooks/use-supabase-auth-listener";
 import { logoutAction } from "@/app/(auth)/actions";
 
@@ -32,7 +32,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
-  const user = useAuth();
+  const { user, isLoading } = useAuthState();
 
   useSupabaseAuthListener();
 
@@ -82,7 +82,9 @@ export function Navbar() {
         </ul>
 
         <div className="hidden items-center gap-3 lg:flex">
-          {user ? (
+          {isLoading ? (
+            <div className="h-9 w-32 animate-pulse rounded-full bg-nomad-steel/50" />
+          ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 rounded-full border border-nomad-steel p-1 pr-3 transition-colors hover:border-nomad-ash">

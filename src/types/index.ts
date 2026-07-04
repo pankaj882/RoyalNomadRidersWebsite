@@ -18,6 +18,7 @@ import type {
   Newsletter,
   Contact,
   ContactStatus,
+  Testimonial,
 } from "@prisma/client";
 
 export type {
@@ -40,6 +41,7 @@ export type {
   Newsletter,
   Contact,
   ContactStatus,
+  Testimonial,
 };
 
 /** The authenticated app user: Supabase auth identity + Prisma profile/role. */

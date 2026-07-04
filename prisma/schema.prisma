@@ -92,6 +92,14 @@ model User {
   phone         String?
   instagramHandle String? @map("instagram_handle")
   isActive      Boolean  @default(true) @map("is_active")
+
+  // Core team / "About" page display fields. A user can be marked as a
+  // founding/core member without changing their access `role` — role governs
+  // permissions, these fields govern public-facing team display only.
+  isFounder     Boolean  @default(false) @map("is_founder")
+  founderTitle  String?  @map("founder_title")
+  displayOrder  Int      @default(0) @map("display_order")
+
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
@@ -103,6 +111,7 @@ model User {
   events        Event[]        @relation("EventCreatedBy")
   notifications Notification[]
 
+  @@index([isFounder, displayOrder])
   @@map("users")
 }
 
@@ -347,4 +356,25 @@ model Contact {
 
   @@index([status])
   @@map("contact_submissions")
+}
+
+// -----------------------------------------------------------------------------
+// TESTIMONIALS (homepage social proof)
+// -----------------------------------------------------------------------------
+
+model Testimonial {
+  id           String   @id @default(uuid()) @db.Uuid
+  authorName   String   @map("author_name")
+  authorTitle  String?  @map("author_title")
+  authorAvatarUrl String? @map("author_avatar_url")
+  quote        String   @db.Text
+  rating       Int      @default(5)
+  isApproved   Boolean  @default(false) @map("is_approved")
+  isFeatured   Boolean  @default(false) @map("is_featured")
+  displayOrder Int      @default(0) @map("display_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([isApproved, isFeatured, displayOrder])
+  @@map("testimonials")
 }
