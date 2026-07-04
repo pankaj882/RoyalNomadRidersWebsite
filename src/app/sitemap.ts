@@ -3,10 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { siteConfig } from "@/lib/constants";
 
 /**
- * Static routes plus every published Album and Blog slug. Event slugs are
- * appended here the same way once Events have public detail pages (Phase 5)
- * — the shape of this function does not change, only the arrays being
- * concatenated.
+ * Static routes plus every published Album, Blog, and Event slug.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
@@ -18,12 +15,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/contact", priority: 0.6, changeFrequency: "yearly" },
   ];
 
-  const [albums, blogs] = await Promise.all([
+  const [albums, blogs, events] = await Promise.all([
     prisma.album.findMany({ select: { slug: true, updatedAt: true }, orderBy: { createdAt: "desc" } }),
     prisma.blog.findMany({
       where: { status: "PUBLISHED" },
       select: { slug: true, updatedAt: true },
       orderBy: { publishedAt: "desc" },
+    }),
+    prisma.event.findMany({
+      where: { status: { not: "CANCELLED" } },
+      select: { slug: true, updatedAt: true },
+      orderBy: { startDate: "desc" },
     }),
   ]);
 
@@ -48,5 +50,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
-  return [...staticEntries, ...albumEntries, ...blogEntries];
+  const eventEntries: MetadataRoute.Sitemap = events.map((event) => ({
+    url: `${siteConfig.url}/events/${event.slug}`,
+    lastModified: event.updatedAt,
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
+
+  return [...staticEntries, ...albumEntries, ...blogEntries, ...eventEntries];
 }

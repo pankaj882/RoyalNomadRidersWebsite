@@ -36,6 +36,7 @@
     "@radix-ui/react-toast": "1.2.4",
     "@supabase/ssr": "0.5.2",
     "@supabase/supabase-js": "2.48.1",
+    "@tailwindcss/typography": "0.5.15",
     "@tiptap/extension-character-count": "2.11.5",
     "@tiptap/extension-image": "2.11.5",
     "@tiptap/extension-link": "2.11.5",
@@ -56,6 +57,7 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hook-form": "7.54.2",
+    "resend": "^4.1.1",
     "sanitize-html": "2.14.0",
     "server-only": "0.0.1",
     "sonner": "1.7.2",
@@ -66,7 +68,6 @@
     "zod": "3.24.1"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.20",
     "@types/node": "22.10.7",
     "@types/react": "19.0.7",
     "@types/react-dom": "19.0.3",

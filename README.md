@@ -30,7 +30,7 @@ Official website for **Royal Nomad Riders Club** — an adventure motorcycle rid
 - npm 10+
 - A free [Supabase](https://supabase.com) account
 - A free [Vercel](https://vercel.com) account
-- (Optional, Phase 5+) A free [Resend](https://resend.com) account for transactional email
+- (Optional) A free [Resend](https://resend.com) account for transactional email — registration confirmation emails (Phase 5) are skipped gracefully with a console warning if this isn't configured, so it's not required to run the site.
 
 ---
 
@@ -115,12 +115,16 @@ royal-nomad-riders/
 │   │   ├── contact/                  # Contact page + submitContactAction server action
 │   │   ├── gallery/                    # Public gallery listing (search/filter) + [slug] album detail + lightbox
 │   │   ├── blog/                         # Public blog listing (search/filter/pagination) + [slug] post detail
+│   │   ├── events/                         # Public events listing (upcoming + past archive) + [slug] detail/registration
 │   │   ├── admin/gallery/                # Admin gallery CMS: album list, new album, per-album photo manager
 │   │   ├── admin/blog/                     # Admin blog CMS: list, new/edit editor, categories
+│   │   ├── admin/events/                     # Admin event CMS: list, new/edit, registrations table + CSV export
 │   │   ├── api/
 │   │   │   ├── auth/me/                # Client-fetched current-user endpoint (see Phase 2 notes)
 │   │   │   ├── newsletter/              # Newsletter subscribe route handler
-│   │   │   └── blog/[slug]/              # view/like-status/comments — client-fetched, see Phase 4 notes
+│   │   │   ├── blog/[slug]/              # view/like-status/comments — client-fetched, see Phase 4 notes
+│   │   │   ├── admin/events/[eventId]/export/  # CSV registrations export (Route Handler, not a Server Action)
+│   │   │   └── cron/archive-events/            # Daily Vercel Cron target — see Phase 5 notes
 │   │   ├── layout.tsx                     # Root layout: fonts, JSON-LD, Navbar/Footer, AuthProvider
 │   │   ├── page.tsx                        # Home page — composes every homepage section
 │   │   ├── sitemap.ts                       # Dynamic sitemap.xml
@@ -135,19 +139,22 @@ royal-nomad-riders/
 │   │   ├── about/                  # About page sections (History, MissionVision, SafetyGuidelines, ...)
 │   │   ├── gallery/                  # AlbumCard, AlbumImageGrid, ImageLightbox
 │   │   ├── blog/                       # LikeButton, CommentSection/Form/Item, ShareButtons, ViewTracker, RelatedPosts, BlogContent
+│   │   ├── events/                       # RegistrationForm, PastEventCard
 │   │   ├── admin/gallery/              # AlbumForm, BulkUploader, ImageManagerGrid, EditImageDialog
 │   │   ├── admin/blog/                   # BlogEditorForm, RichTextEditor, CoverImageUploader, CategoryManager
+│   │   ├── admin/events/                   # EventForm, EventCoverUploader, RegistrationsTable, EventRowActions
 │   │   ├── contact/                 # ContactForm, ContactInfo, MapEmbed
 │   │   ├── shared/                    # Logo, SectionHeading, AnimatedContainer, BlogCard, EventCard, EmptyState, ConfirmDialog, Pagination
 │   │   └── providers/                  # AuthProvider (client-side session hydration — see Phase 2 notes)
 │   ├── lib/
 │   │   ├── supabase/           # Browser client, server client, middleware session helper, storage.ts (admin delete)
-│   │   ├── validations/         # Zod schemas (auth, contact, gallery, blog; more added per phase)
+│   │   ├── validations/         # Zod schemas (auth, contact, gallery, blog, event, registration)
 │   │   ├── data/                  # Prisma query functions, kept separate from components
 │   │   ├── prisma.ts                # Prisma client singleton
 │   │   ├── auth.ts                   # getCurrentUser, requireRole, requireAdminAccess, etc.
 │   │   ├── constants.ts                # Site config, nav links, role labels
 │   │   ├── seo.ts                       # Metadata + JSON-LD builders
+│   │   ├── email.ts                      # Resend transactional email (registration confirmations)
 │   │   ├── instagram.ts                  # Instagram Graph API client
 │   │   ├── rate-limit.ts                  # Upstash-backed rate limiting with in-memory fallback
 │   │   ├── get-client-ip.ts                # Requester IP resolution for rate limiting
@@ -155,6 +162,8 @@ royal-nomad-riders/
 │   │   ├── gallery-upload.ts                 # Client-side direct-to-Supabase-Storage upload helper
 │   │   ├── blog-storage-shared.ts             # Blog cover/content image path helpers (reuses gallery bucket)
 │   │   ├── blog-upload.ts                      # Client-side blog image upload helper
+│   │   ├── event-storage-shared.ts              # Event cover image path helpers (reuses gallery bucket)
+│   │   ├── event-upload.ts                       # Client-side event cover upload helper
 │   │   ├── sanitize-html.ts                     # Server-only HTML sanitizer for blog content
 │   │   ├── utils.ts                         # cn(), slugify, formatDate, etc.
 │   │   ├── env.ts                            # Client-safe env validation (Zod)
@@ -192,7 +201,8 @@ royal-nomad-riders/
    ```bash
    DATABASE_URL="<prod-url>" DIRECT_URL="<prod-direct-url>" npm run prisma:deploy
    ```
-7. Add your custom domain under **Project Settings → Domains**, then update `NEXT_PUBLIC_SITE_URL` and the Supabase **Site URL** / **Redirect URLs** to match.
+7. **Cron job:** `vercel.json` registers a daily Cron Job (`/api/cron/archive-events`, 2am UTC) automatically on deploy — available on Vercel's free Hobby plan at daily granularity. Just make sure `CRON_SECRET` is set to the same value in your Vercel project's environment variables as in `.env`; Vercel sends it automatically as a Bearer token for its own scheduled invocations.
+8. Add your custom domain under **Project Settings → Domains**, then update `NEXT_PUBLIC_SITE_URL` and the Supabase **Site URL** / **Redirect URLs** to match.
 
 ---
 
@@ -218,7 +228,7 @@ royal-nomad-riders/
 - [x] **Phase 2 — Public Pages:** Home (all sections), About, Contact — see [Phase 2 notes](#phase-2-notes).
 - [x] **Phase 3 — Gallery:** Albums, upload, lightbox, search/filter, admin CMS — see [Phase 3 notes](#phase-3-notes).
 - [x] **Phase 4 — Blog:** Rich text editor, CRUD, categories, comments, likes — see [Phase 4 notes](#phase-4-notes).
-- [ ] **Phase 5 — Events + Registration:** Event list, registration form, CSV export, confirmation email.
+- [x] **Phase 5 — Events + Registration:** Event list, registration form, CSV export, confirmation email — see [Phase 5 notes](#phase-5-notes).
 - [ ] **Phase 6 — Admin Dashboard:** Full stats, role management, unified CMS.
 - [ ] **Phase 7 — SEO/Performance Pass + Deployment Guide.**
 
@@ -301,6 +311,34 @@ royal-nomad-riders/
 **Known limitation — blog content image cleanup:** Deleting a post does not delete its cover image or any inline content images from Storage. Unlike the gallery (where every image is a tracked `GalleryImage` row), blog content images are embedded as arbitrary `<img>` tags inside free-form HTML, so there's no structured list of "images belonging to this post" to safely garbage-collect from a synchronous delete action. This is a reasonable candidate for a periodic cleanup job (list all objects under `blog/` in Storage, diff against URLs referenced in `Blog.content`/`Blog.coverImageUrl` across all posts, delete the orphans) rather than something to bolt onto `deleteBlogAction`.
 
 **Reused, not duplicated:** Blog cover/content images upload into the same `gallery` Supabase Storage bucket from Phase 3 (under a `blog/covers/` and `blog/content/` prefix — see `src/lib/blog-storage-shared.ts`), so no second bucket or second set of RLS policies is required.
+
+---
+
+## Phase 5 Notes
+
+**Public events:**
+- `/events` — upcoming rides (destination, date, meeting point, time, difficulty, distance, ride captain, seats left, Register Now — via the existing `EventCard`), plus a **Past Rides** archive section below it.
+- `/events/[slug]` — full ride details and, if registration is open and the ride hasn't happened yet, the complete registration form. Closed/past/cancelled rides show a clear status message instead of the form.
+
+**Registration form** (`src/components/events/registration-form.tsx`) implements every field from the spec exactly: Personal (name, email, phone, age, blood group, emergency contact), Motorcycle (brand, model, registration number, riding experience), Ride Gear checkboxes (helmet/jacket/gloves/boots/knee guards), Medical (allergies, medical conditions), and the required "I agree to ride responsibly" checkbox (enforced with `z.literal(true)` — the form cannot submit without it, server-side, not just a disabled button).
+
+**On submit** (`submitRegistrationAction` in `src/app/events/actions.ts`):
+1. Rate-limited by IP (5 submissions/hour) — reuses the same `checkRateLimit` utility from the Phase 2 contact form.
+2. Re-checks seat availability **live against the database** at submission time (not against whatever was shown on the possibly-cached page) — if the ride is full, the registration is created with `status: WAITLISTED` instead of `CONFIRMED`, so nobody is silently overbooked.
+3. Rejects a duplicate registration (same email, same event).
+4. Stores the registration, sends the confirmation email (see below), and notifies every Admin/Super Admin/Blog Author via `Notification`.
+
+**Confirmation email** (`src/lib/email.ts`) uses **Resend** — if `RESEND_API_KEY` isn't configured, the function logs a warning and returns `false` rather than throwing, so a missing email integration never blocks a registration that's already safely stored in the database. `Registration.confirmationEmailSentAt` records whether it actually went out.
+
+**CSV export** (`/api/admin/events/[eventId]/export`) is a Route Handler, not a Server Action — file downloads need real HTTP response headers (`Content-Disposition: attachment`), which Server Actions aren't designed to return. It does its own role check (not `requireManagementAccess()`, which is built to redirect page requests, not return a clean 401/403 for what's essentially a download link).
+
+**Architecture decision — "past events move to archive" is enforced twice, deliberately:**
+1. **In real time**, `src/lib/data/events.ts` filters `getUpcomingEventsList`/`getPastEventsList` directly on `startDate` versus `now()` — so a ride that started an hour ago never shows as "upcoming" to a visitor, regardless of whether any background job has run.
+2. **In stored data**, a daily Vercel Cron Job (`vercel.json` → `/api/cron/archive-events`, `0 2 * * *`) flips past `UPCOMING` events to `status: COMPLETED, isArchived: true` and closes their registration — keeping the admin dashboard's counts and the `Event.status`/`isArchived` fields themselves correct for reporting, not just for what's rendered.
+
+This means the public site is correct immediately even before the cron job ever runs (deploy today, and an event dated yesterday already shows as "past" on `/events`); the cron job's role is strictly to keep the *stored* status fields in sync for anything that reads them directly. Vercel Cron Jobs are available on the free Hobby plan at daily granularity, which is what the schedule above uses. The route checks a `CRON_SECRET` bearer token (set the same value in both `.env`/Vercel env vars — Vercel automatically sends it as `Authorization: Bearer $CRON_SECRET` for its own scheduled invocations).
+
+**Known limitation:** the registration form does not currently check whether a signed-in user has already registered for a ride under a *different* email address — de-duplication is by email only, matching the spec's field list (there's no requirement to be signed in to register at all; `Registration.userId` is set opportunistically when the submitter happens to be logged in, but registering as a guest is fully supported).
 
 ---
 
