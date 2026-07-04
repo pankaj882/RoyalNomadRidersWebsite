@@ -75,7 +75,7 @@ Visit `http://localhost:3000`.
 4. **Auth settings** — go to **Authentication → URL Configuration**:
    - Set **Site URL** to your deployed domain (or `http://localhost:3000` for local dev)
    - Add `{SITE_URL}/auth/callback` to **Redirect URLs**
-5. **Storage** (used starting Phase 3 — Gallery) — create a public bucket named `gallery` under **Storage**.
+5. **Storage** — create a public bucket named `gallery` under **Storage** (Storage → New Bucket → name `gallery` → Public: **ON**). Then run `supabase/storage-policies.sql` in the SQL Editor to restrict uploads/deletes to Admin/Super Admin accounts while keeping read access public.
 
 ### Creating your first Super Admin
 
@@ -113,9 +113,14 @@ royal-nomad-riders/
 │   │   ├── admin/                 # Role-protected dashboard (requireAdminAccess)
 │   │   ├── auth/callback/          # Supabase email-confirmation / OAuth redirect handler
 │   │   ├── contact/                  # Contact page + submitContactAction server action
+│   │   ├── gallery/                    # Public gallery listing (search/filter) + [slug] album detail + lightbox
+│   │   ├── blog/                         # Public blog listing (search/filter/pagination) + [slug] post detail
+│   │   ├── admin/gallery/                # Admin gallery CMS: album list, new album, per-album photo manager
+│   │   ├── admin/blog/                     # Admin blog CMS: list, new/edit editor, categories
 │   │   ├── api/
 │   │   │   ├── auth/me/                # Client-fetched current-user endpoint (see Phase 2 notes)
-│   │   │   └── newsletter/              # Newsletter subscribe route handler
+│   │   │   ├── newsletter/              # Newsletter subscribe route handler
+│   │   │   └── blog/[slug]/              # view/like-status/comments — client-fetched, see Phase 4 notes
 │   │   ├── layout.tsx                     # Root layout: fonts, JSON-LD, Navbar/Footer, AuthProvider
 │   │   ├── page.tsx                        # Home page — composes every homepage section
 │   │   ├── sitemap.ts                       # Dynamic sitemap.xml
@@ -128,12 +133,16 @@ royal-nomad-riders/
 │   │   ├── layout/             # Navbar, Footer
 │   │   ├── home/                 # Homepage sections (Hero, LatestRide, UpcomingEvents, ...)
 │   │   ├── about/                  # About page sections (History, MissionVision, SafetyGuidelines, ...)
+│   │   ├── gallery/                  # AlbumCard, AlbumImageGrid, ImageLightbox
+│   │   ├── blog/                       # LikeButton, CommentSection/Form/Item, ShareButtons, ViewTracker, RelatedPosts, BlogContent
+│   │   ├── admin/gallery/              # AlbumForm, BulkUploader, ImageManagerGrid, EditImageDialog
+│   │   ├── admin/blog/                   # BlogEditorForm, RichTextEditor, CoverImageUploader, CategoryManager
 │   │   ├── contact/                 # ContactForm, ContactInfo, MapEmbed
-│   │   ├── shared/                    # Logo, SectionHeading, AnimatedContainer, BlogCard, EventCard, EmptyState
+│   │   ├── shared/                    # Logo, SectionHeading, AnimatedContainer, BlogCard, EventCard, EmptyState, ConfirmDialog, Pagination
 │   │   └── providers/                  # AuthProvider (client-side session hydration — see Phase 2 notes)
 │   ├── lib/
-│   │   ├── supabase/           # Browser client, server client, middleware session helper
-│   │   ├── validations/         # Zod schemas (auth, contact; more added per phase)
+│   │   ├── supabase/           # Browser client, server client, middleware session helper, storage.ts (admin delete)
+│   │   ├── validations/         # Zod schemas (auth, contact, gallery, blog; more added per phase)
 │   │   ├── data/                  # Prisma query functions, kept separate from components
 │   │   ├── prisma.ts                # Prisma client singleton
 │   │   ├── auth.ts                   # getCurrentUser, requireRole, requireAdminAccess, etc.
@@ -142,6 +151,11 @@ royal-nomad-riders/
 │   │   ├── instagram.ts                  # Instagram Graph API client
 │   │   ├── rate-limit.ts                  # Upstash-backed rate limiting with in-memory fallback
 │   │   ├── get-client-ip.ts                # Requester IP resolution for rate limiting
+│   │   ├── gallery-storage-shared.ts        # Client+server safe storage path/URL helpers
+│   │   ├── gallery-upload.ts                 # Client-side direct-to-Supabase-Storage upload helper
+│   │   ├── blog-storage-shared.ts             # Blog cover/content image path helpers (reuses gallery bucket)
+│   │   ├── blog-upload.ts                      # Client-side blog image upload helper
+│   │   ├── sanitize-html.ts                     # Server-only HTML sanitizer for blog content
 │   │   ├── utils.ts                         # cn(), slugify, formatDate, etc.
 │   │   ├── env.ts                            # Client-safe env validation (Zod)
 │   │   └── env.server.ts                      # Server-only secret validation (Zod, `server-only` guarded)
@@ -201,9 +215,9 @@ royal-nomad-riders/
 ## Roadmap
 
 - [x] **Phase 1 — Foundation:** Next.js/TS/Tailwind/shadcn scaffold, full Prisma schema, Supabase Auth, middleware, theme, nav/footer, SEO base, error/loading states, README.
-- [x] **Phase 2 — Public Pages:** Home (all sections), About, Contact — see [Phase 2 notes](#phase-2-notes) below.
-- [ ] **Phase 3 — Gallery:** Albums, upload, lightbox, search/filter, admin CMS.
-- [ ] **Phase 4 — Blog:** Rich text editor, CRUD, categories, comments, likes.
+- [x] **Phase 2 — Public Pages:** Home (all sections), About, Contact — see [Phase 2 notes](#phase-2-notes).
+- [x] **Phase 3 — Gallery:** Albums, upload, lightbox, search/filter, admin CMS — see [Phase 3 notes](#phase-3-notes).
+- [x] **Phase 4 — Blog:** Rich text editor, CRUD, categories, comments, likes — see [Phase 4 notes](#phase-4-notes).
 - [ ] **Phase 5 — Events + Registration:** Event list, registration form, CSV export, confirmation email.
 - [ ] **Phase 6 — Admin Dashboard:** Full stats, role management, unified CMS.
 - [ ] **Phase 7 — SEO/Performance Pass + Deployment Guide.**
@@ -233,6 +247,60 @@ royal-nomad-riders/
 - `src/lib/data/club-info.ts` — static editorial content (history, mission/vision, safety guidelines, timeline) for the About page.
 
 **Contact form** (`src/app/contact/actions.ts`) persists to `Contact`, rate-limits by IP, and creates a `Notification` for every Admin/Super Admin/Blog Author so new inquiries surface in the admin dashboard activity feed once it ships in Phase 6.
+
+---
+
+## Phase 3 Notes
+
+**Public gallery:**
+- `/gallery` — album grid with debounced text search and a location filter, both reflected in the URL query string (`?q=...&location=...`) so results are shareable/bookmarkable.
+- `/gallery/[slug]` — album detail page with a lazy-loaded image grid and a full-screen lightbox (keyboard arrow-key navigation, click-to-zoom, native Web Share API with clipboard fallback). Prerendered at build time via `generateStaticParams` for every existing album, then served via on-demand ISR (`revalidate = 3600`) for anything created afterward.
+
+**Admin gallery CMS** (`/admin/gallery`):
+- Create/edit albums, feature/unfeature from the list view, delete (cascades photos + storage cleanup) with a confirmation dialog.
+- `/admin/gallery/[albumId]` — bulk photo uploader (drag-and-drop or multi-select, concurrent uploads capped at 3 in flight, per-file status), inline caption/alt-text editing, and reordering.
+
+**Architecture decision — image reordering uses Move Up/Down, not drag-and-drop:** Reordering is implemented as buttons that swap `sortOrder` with the immediate neighbor (`moveImageAction` in `src/app/admin/gallery/actions.ts`), rather than a drag-and-drop library. This is keyboard-accessible by default and has no touch-event or drop-target edge cases to get wrong — a deliberate reliability trade-off given there's no live browser to test drag interactions against during development. If true drag-and-drop reordering is wanted later, `@dnd-kit` is the recommended addition — swap the button handlers in `ImageManagerGrid` for drag handlers calling the same underlying sort-order-swap logic.
+
+**Architecture decision — uploads bypass Server Actions:** Photos upload directly from the browser to Supabase Storage (`src/lib/gallery-upload.ts`, using the staff member's own authenticated Supabase session) rather than being sent through a Server Action's request body, which has a much lower payload ceiling on Vercel. Only the resulting `{ storagePath, url, altText, width, height }` metadata is sent to `createGalleryImagesAction` to persist the database rows. `src/lib/gallery-storage-shared.ts` holds the storage-path/URL helpers that need to run on both sides (client, for upload; server, for the admin service-role client) — kept separate from `src/lib/supabase/storage.ts`, which is `server-only` and holds the service-role deletion logic.
+
+**Storage RLS:** `supabase/storage-policies.sql` (run once, manually, in the Supabase SQL Editor — Prisma does not manage Storage policies) restricts photo uploads/updates/deletes to Admin/Super Admin accounts while keeping reads public. The app's own delete actions use the service-role client and bypass these policies by design; they exist as defense-in-depth against any direct client-side write attempt.
+
+**New shared library code:**
+- `src/lib/data/gallery.ts` — public album/image queries (search, location filter, slug lookup, `generateStaticParams` slug list).
+- `src/lib/data/admin-gallery.ts` — admin album/image queries.
+- `src/lib/validations/gallery.ts` — Zod schemas for albums, bulk image uploads, and image edits.
+- `src/components/shared/confirm-dialog.tsx` — reusable destructive-action confirmation dialog, intended for reuse in Phase 4/5/6 (delete blog, delete event, delete user, etc.).
+
+---
+
+## Phase 4 Notes
+
+**Public blog:**
+- `/blog` — listing with debounced search, category filter, and numbered pagination (chosen over infinite scroll for crawlable, bookmarkable, shareable URLs — `?q=...&category=...&page=...`).
+- `/blog/[slug]` — full post with sanitized rich content, ride-detail sidebar (location/motorcycle/distance/date), author bio, like button, share buttons (native Web Share API with WhatsApp + copy-link fallbacks), comments (one level of replies), and related posts by category. Prerendered via `generateStaticParams` for every published post, then ISR (`revalidate = 1800`).
+
+**Admin blog CMS** (`/admin/blog`):
+- List scoped by role: Admins/Super Admins see every post, Blog Authors see only their own (enforced at the Prisma query level in `getBlogsForAdmin`, not filtered client-side).
+- `/admin/blog/new` and `/admin/blog/[blogId]` — the same `BlogEditorForm`: title, excerpt, cover image upload, category, ride metadata (date/location/motorcycle/distance), optional SEO overrides, and the rich text editor. **Save Draft** and **Publish** are separate actions, matching the spec exactly; a published post can be moved back to Draft.
+- `/admin/blog/categories` — Admin/Super Admin only (`requireManagementAccess`). Deleting a category doesn't delete or block its posts — `Blog.category` uses `onDelete: SetNull`, so affected posts simply become uncategorized.
+- Ownership is enforced server-side in every mutating action (`assertCanEditBlog` in `src/app/admin/blog/actions.ts`), not just hidden in the UI — a Blog Author calling `updateBlogAction`/`deleteBlogAction` on someone else's post id directly gets rejected regardless of what the client sent.
+
+**Rich text editor** (`src/components/admin/blog/rich-text-editor.tsx`) is built on **Tiptap**, covering every format the spec asked for: bold/italic/strikethrough/inline code, headings, bullet & numbered lists, blockquotes, code blocks, links, inline images, and **YouTube video embeds**. Video is embed-only (a URL, not a file upload) — hosting raw video files would eat through Supabase's free-tier storage/bandwidth far faster than photos, so linking to YouTube (already the de facto place riders post ride videos) was the pragmatic choice here.
+
+**Content security:** All HTML from the editor is run through `sanitizeBlogContent()` (`src/lib/sanitize-html.ts`, using `sanitize-html`) at write time, before it's ever stored — allowlisting exactly the tags Tiptap can produce, and restricting embeddable iframes to YouTube hostnames only. This is the actual security boundary; `BlogContent`'s `dangerouslySetInnerHTML` on the read side is a display step, not a filter.
+
+**Likes** use a `BlogLike` join table (`@@unique([blogId, userId])`) as the source of truth — enabling toggle-off and preventing duplicate likes — while `Blog.likeCount` stays a denormalized counter kept in sync transactionally, so list/card views never need to `COUNT()` a join table just to show a number.
+
+**Architecture decision — likes and comments are client-fetched, not embedded in the ISR page:** This follows the same principle as Phase 2's auth decision. `/blog/[slug]` is statically generated and ISR-revalidated, which is great for the post content itself but wrong for two things that are inherently per-user or highly mutable:
+- *"Has this visitor liked this post?"* is per-user data. Baking it into the cached page would either leak one visitor's like state to everyone else (wrong) or force the whole page dynamic just for one boolean (defeats ISR). Instead, `LikeButton` fetches `/api/blog/[slug]/like-status` client-side on mount.
+- *Comments* need to feel live immediately after posting — but ISR's `revalidate` window means the page's server-rendered props could stay stale for up to 30 minutes. `CommentSection` fetches `/api/blog/[slug]/comments` client-side on mount and again after every post/delete, so new comments appear instantly without touching the page's cache lifecycle at all.
+
+`Blog.likeCount` (an aggregate, not per-user) is the one piece of like/comment-adjacent data that *is* safe to read from the cached page props, since serving it a few minutes stale is a fine trade-off for a "42 likes" counter.
+
+**Known limitation — blog content image cleanup:** Deleting a post does not delete its cover image or any inline content images from Storage. Unlike the gallery (where every image is a tracked `GalleryImage` row), blog content images are embedded as arbitrary `<img>` tags inside free-form HTML, so there's no structured list of "images belonging to this post" to safely garbage-collect from a synchronous delete action. This is a reasonable candidate for a periodic cleanup job (list all objects under `blog/` in Storage, diff against URLs referenced in `Blog.content`/`Blog.coverImageUrl` across all posts, delete the orphans) rather than something to bolt onto `deleteBlogAction`.
+
+**Reused, not duplicated:** Blog cover/content images upload into the same `gallery` Supabase Storage bucket from Phase 3 (under a `blog/covers/` and `blog/content/` prefix — see `src/lib/blog-storage-shared.ts`), so no second bucket or second set of RLS policies is required.
 
 ---
 

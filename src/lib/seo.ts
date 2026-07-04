@@ -215,6 +215,29 @@ export function buildEventJsonLd(event: EventJsonLdInput) {
   };
 }
 
+interface ImageGalleryJsonLdInput {
+  name: string;
+  description: string;
+  slug: string;
+  images: { url: string; caption?: string | null }[];
+}
+
+/** ImageGallery JSON-LD for gallery album detail pages. */
+export function buildImageGalleryJsonLd(input: ImageGalleryJsonLdInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    name: input.name,
+    description: input.description,
+    url: `${siteConfig.url}/gallery/${input.slug}`,
+    image: input.images.map((image) => ({
+      "@type": "ImageObject",
+      contentUrl: image.url,
+      ...(image.caption && { caption: image.caption }),
+    })),
+  };
+}
+
 /** Renders a JSON-LD `<script>` payload. Use inside a Server Component. */
 export function jsonLdScriptProps(data: Record<string, unknown>) {
   return {

@@ -1,0 +1,63 @@
+import "server-only";
+import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
+
+export interface AlbumListFilters {
+  q?: string;
+  location?: string;
+}
+
+/** Albums for the public gallery grid, newest first, with a small image preview each. */
+export async function getAlbums(filters: AlbumListFilters = {}) {
+  const where: Prisma.AlbumWhereInput = {
+    ...(filters.q && {
+      OR: [
+        { title: { contains: filters.q, mode: "insensitive" } },
+        { description: { contains: filters.q, mode: "insensitive" } },
+        { location: { contains: filters.q, mode: "insensitive" } },
+      ],
+    }),
+    ...(filters.location && { location: { equals: filters.location, mode: "insensitive" } }),
+  };
+
+  const albums = await prisma.album.findMany({
+    where,
+    orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
+    include: {
+      images: { orderBy: { sortOrder: "asc" }, take: 4 },
+      _count: { select: { images: true } },
+    },
+  });
+
+  return albums;
+}
+
+/** Distinct, non-empty album locations — powers the gallery filter dropdown. */
+export async function getAlbumLocations(): Promise<string[]> {
+  const rows = await prisma.album.findMany({
+    where: { location: { not: null } },
+    select: { location: true },
+    distinct: ["location"],
+    orderBy: { location: "asc" },
+  });
+
+  return rows.map((row) => row.location).filter((location): location is string => !!location);
+}
+
+/** A single album with all of its images, for the album detail / lightbox page. */
+export async function getAlbumBySlug(slug: string) {
+  const album = await prisma.album.findUnique({
+    where: { slug },
+    include: {
+      images: { orderBy: { sortOrder: "asc" } },
+    },
+  });
+
+  return album;
+}
+
+/** All album slugs, used by generateStaticParams for build-time prerendering. */
+export async function getAllAlbumSlugs(): Promise<string[]> {
+  const albums = await prisma.album.findMany({ select: { slug: true } });
+  return albums.map((album) => album.slug);
+}

@@ -93,4 +93,36 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Blog content typography — layered on top of Tailwind Typography's
+     `prose prose-invert` so rendered blog posts (and the rich text editor
+     itself) match the adventure red/charcoal palette instead of the
+     plugin's default blue links / slate borders. */
+  .prose-nomad {
+    --tw-prose-body: theme("colors.nomad.fog");
+    --tw-prose-headings: theme("colors.nomad.white");
+    --tw-prose-links: theme("colors.nomad.red.bright");
+    --tw-prose-bold: theme("colors.nomad.white");
+    --tw-prose-bullets: theme("colors.nomad.red.DEFAULT");
+    --tw-prose-counters: theme("colors.nomad.red.DEFAULT");
+    --tw-prose-quotes: theme("colors.nomad.fog");
+    --tw-prose-quote-borders: theme("colors.nomad.red.DEFAULT");
+    --tw-prose-code: theme("colors.nomad.white");
+    --tw-prose-pre-bg: theme("colors.nomad.black");
+    --tw-prose-pre-code: theme("colors.nomad.fog");
+    --tw-prose-hr: theme("colors.nomad.steel");
+  }
+  .prose-nomad code::before,
+  .prose-nomad code::after {
+    content: "";
+  }
+  .prose-nomad code {
+    background-color: theme("colors.nomad.steel");
+    border-radius: 0.25rem;
+    padding: 0.15rem 0.4rem;
+  }
+  .prose-nomad pre code {
+    background-color: transparent;
+    padding: 0;
+  }
 }

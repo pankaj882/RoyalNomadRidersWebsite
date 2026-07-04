@@ -37,7 +37,7 @@ export async function GalleryPreviewSection() {
                 className={index === 0 ? "col-span-2 row-span-2" : ""}
               >
                 <Link
-                  href="/gallery"
+                  href={`/gallery/${image.album.slug}`}
                   className="group relative block aspect-square w-full overflow-hidden rounded-md bg-nomad-steel"
                 >
                   <Image

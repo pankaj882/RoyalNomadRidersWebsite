@@ -19,6 +19,7 @@ import type {
   Contact,
   ContactStatus,
   Testimonial,
+  BlogLike,
 } from "@prisma/client";
 
 export type {
@@ -42,6 +43,7 @@ export type {
   Contact,
   ContactStatus,
   Testimonial,
+  BlogLike,
 };
 
 /** The authenticated app user: Supabase auth identity + Prisma profile/role. */
@@ -88,4 +90,10 @@ export type EventWithAvailability = Event & {
 export type AlbumWithPreview = Album & {
   images: GalleryImage[];
   _count?: { images: number };
+};
+
+/** A comment with its author and one level of nested replies (also with authors). */
+export type CommentWithAuthor = Comment & {
+  author: Pick<User, "id" | "name" | "avatarUrl">;
+  replies: (Comment & { author: Pick<User, "id" | "name" | "avatarUrl"> })[];
 };

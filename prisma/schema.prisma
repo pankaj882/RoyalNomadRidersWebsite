@@ -105,6 +105,7 @@ model User {
 
   blogs         Blog[]
   comments      Comment[]
+  blogLikes     BlogLike[]
   registrations Registration[]
   albums        Album[]        @relation("AlbumCreatedBy")
   galleryImages GalleryImage[] @relation("GalleryUploadedBy")
@@ -186,7 +187,7 @@ model Blog {
   authorId       String     @map("author_id") @db.Uuid
   author         User       @relation(fields: [authorId], references: [id])
   categoryId     String?    @map("category_id") @db.Uuid
-  category       Category?  @relation(fields: [categoryId], references: [id])
+  category       Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   rideDate       DateTime?  @map("ride_date")
   location       String?
   motorcycle     String?
@@ -201,6 +202,7 @@ model Blog {
   updatedAt      DateTime   @updatedAt @map("updated_at")
 
   comments       Comment[]
+  likes          BlogLike[]
 
   @@index([slug])
   @@index([status])
@@ -225,6 +227,22 @@ model Comment {
 
   @@index([blogId])
   @@map("comments")
+}
+
+// A join table (rather than a bare counter) so we can enforce "one like per
+// user per post" and support toggling a like off, while `Blog.likeCount`
+// stays a denormalized counter kept in sync transactionally for fast reads.
+model BlogLike {
+  id        String   @id @default(uuid()) @db.Uuid
+  blogId    String   @map("blog_id") @db.Uuid
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([blogId, userId])
+  @@index([blogId])
+  @@map("blog_likes")
 }
 
 // -----------------------------------------------------------------------------
