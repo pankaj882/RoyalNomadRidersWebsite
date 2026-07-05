@@ -85,7 +85,7 @@ Visit `http://localhost:3000`.
    ```sql
    update public.users set role = 'SUPER_ADMIN' where email = 'you@example.com';
    ```
-4. Sign in — you'll now have full `/admin` access once the admin CMS screens ship (Phase 6).
+4. Sign in — you'll now have full `/admin` access, including **Users** (`/admin/users`), where every subsequent role change can be made through the UI instead of SQL.
 
 ### Featuring a rider on the About page's Core Members section
 
@@ -119,11 +119,15 @@ royal-nomad-riders/
 │   │   ├── admin/gallery/                # Admin gallery CMS: album list, new album, per-album photo manager
 │   │   ├── admin/blog/                     # Admin blog CMS: list, new/edit editor, categories
 │   │   ├── admin/events/                     # Admin event CMS: list, new/edit, registrations table + CSV export
+│   │   ├── admin/contact/                      # Contact submission management (status: New/In Progress/Resolved/Archived)
+│   │   ├── admin/users/                         # User role management, activation, About-page display (Super Admin only)
+│   │   ├── admin/notifications/                  # markNotificationReadAction / markAllNotificationsReadAction
 │   │   ├── api/
 │   │   │   ├── auth/me/                # Client-fetched current-user endpoint (see Phase 2 notes)
 │   │   │   ├── newsletter/              # Newsletter subscribe route handler
 │   │   │   ├── blog/[slug]/              # view/like-status/comments — client-fetched, see Phase 4 notes
 │   │   │   ├── admin/events/[eventId]/export/  # CSV registrations export (Route Handler, not a Server Action)
+│   │   │   ├── admin/notifications/            # Notification bell data endpoint
 │   │   │   └── cron/archive-events/            # Daily Vercel Cron target — see Phase 5 notes
 │   │   ├── layout.tsx                     # Root layout: fonts, JSON-LD, Navbar/Footer, AuthProvider
 │   │   ├── page.tsx                        # Home page — composes every homepage section
@@ -143,15 +147,18 @@ royal-nomad-riders/
 │   │   ├── admin/gallery/              # AlbumForm, BulkUploader, ImageManagerGrid, EditImageDialog
 │   │   ├── admin/blog/                   # BlogEditorForm, RichTextEditor, CoverImageUploader, CategoryManager
 │   │   ├── admin/events/                   # EventForm, EventCoverUploader, RegistrationsTable, EventRowActions
+│   │   ├── admin/contact/                    # ContactRow (view + status dialog)
+│   │   ├── admin/users/                        # UserTable, FounderDisplayDialog
+│   │   ├── admin/notification-bell.tsx           # Notification bell dropdown, self-fetching + polling
 │   │   ├── contact/                 # ContactForm, ContactInfo, MapEmbed
 │   │   ├── shared/                    # Logo, SectionHeading, AnimatedContainer, BlogCard, EventCard, EmptyState, ConfirmDialog, Pagination
 │   │   └── providers/                  # AuthProvider (client-side session hydration — see Phase 2 notes)
 │   ├── lib/
 │   │   ├── supabase/           # Browser client, server client, middleware session helper, storage.ts (admin delete)
-│   │   ├── validations/         # Zod schemas (auth, contact, gallery, blog, event, registration)
-│   │   ├── data/                  # Prisma query functions, kept separate from components
+│   │   ├── validations/         # Zod schemas (auth, contact, gallery, blog, event, registration, user)
+│   │   ├── data/                  # Prisma query functions, kept separate from components (incl. admin-dashboard.ts, admin-users.ts, admin-contact.ts, notifications.ts)
 │   │   ├── prisma.ts                # Prisma client singleton
-│   │   ├── auth.ts                   # getCurrentUser, requireRole, requireAdminAccess, etc.
+│   │   ├── auth.ts                   # getCurrentUser, requireRole, requireAdminAccess, requireSuperAdmin, etc.
 │   │   ├── constants.ts                # Site config, nav links, role labels
 │   │   ├── seo.ts                       # Metadata + JSON-LD builders
 │   │   ├── email.ts                      # Resend transactional email (registration confirmations)
@@ -229,7 +236,7 @@ royal-nomad-riders/
 - [x] **Phase 3 — Gallery:** Albums, upload, lightbox, search/filter, admin CMS — see [Phase 3 notes](#phase-3-notes).
 - [x] **Phase 4 — Blog:** Rich text editor, CRUD, categories, comments, likes — see [Phase 4 notes](#phase-4-notes).
 - [x] **Phase 5 — Events + Registration:** Event list, registration form, CSV export, confirmation email — see [Phase 5 notes](#phase-5-notes).
-- [ ] **Phase 6 — Admin Dashboard:** Full stats, role management, unified CMS.
+- [x] **Phase 6 — Admin Dashboard:** Full stats, role management, unified CMS — see [Phase 6 notes](#phase-6-notes).
 - [ ] **Phase 7 — SEO/Performance Pass + Deployment Guide.**
 
 ---
@@ -339,6 +346,21 @@ royal-nomad-riders/
 This means the public site is correct immediately even before the cron job ever runs (deploy today, and an event dated yesterday already shows as "past" on `/events`); the cron job's role is strictly to keep the *stored* status fields in sync for anything that reads them directly. Vercel Cron Jobs are available on the free Hobby plan at daily granularity, which is what the schedule above uses. The route checks a `CRON_SECRET` bearer token (set the same value in both `.env`/Vercel env vars — Vercel automatically sends it as `Authorization: Bearer $CRON_SECRET` for its own scheduled invocations).
 
 **Known limitation:** the registration form does not currently check whether a signed-in user has already registered for a ride under a *different* email address — de-duplication is by email only, matching the spec's field list (there's no requirement to be signed in to register at all; `Registration.userId` is set opportunistically when the submitter happens to be logged in, but registering as a guest is fully supported).
+
+---
+
+## Phase 6 Notes
+
+**Dashboard** (`/admin`) now shows everything the spec asked for, each backed by live Prisma queries in `src/lib/data/admin-dashboard.ts`: 8 stat cards (gallery images, published/draft blogs, upcoming events, total/waitlisted registrations, active users, new contact messages), **Recent Registrations**, **Recent Blog Activity**, and **Upcoming Events** — every row links straight into the relevant management screen.
+
+**Notifications**, created since Phase 2 (contact submissions) and Phase 5 (registrations) but never surfaced until now, are live in a bell icon in the admin header (`src/components/admin/notification-bell.tsx`): unread count badge, list, mark-one or mark-all read, polls every 60 seconds. It self-fetches from `/api/admin/notifications` rather than being fetched in the (already-dynamic) layout, purely so mark-as-read can update the badge instantly without a full page round-trip.
+
+**Contact message management** (`/admin/contact`) — this closes a gap from Phase 2: the contact form already created `Notification` rows linking to an admin contact page, but that page didn't exist until now. Management-role only (`requireManagementAccess`); each message opens in a dialog with a status dropdown (New / In Progress / Resolved / Archived).
+
+**User management** (`/admin/users`, Super Admin only — `requireSuperAdmin`):
+- **Role changes** — Super Admin, Admin, Blog Author, Member — with a hard server-side guard preventing a Super Admin from changing their *own* role or deactivating their *own* account (the classic "lock everyone out" footgun). The role select and deactivate button are simply disabled for your own row, and the server action re-checks it independently regardless of what the client sends.
+- **Deactivation, not deletion.** There's no "delete user" — `Blog.author`, `Comment.author`, `Registration.user`, `Album.createdBy`, `GalleryImage.uploadedBy`, and `Event.createdBy` are all required, non-nullable foreign keys to `User` without a cascade rule, so deleting a user with any content would either fail outright or silently orphan data depending on the relation. `isActive: false` is the safe equivalent — the account immediately loses the ability to sign in (already enforced by `getCurrentUser()`'s `isActive` check from Phase 1), while every post/comment/registration they've ever made stays intact and correctly attributed.
+- **About page display** — the `isFounder`/`founderTitle`/`displayOrder` fields added to `User` back in Phase 2 finally have an editing UI here, via a small dialog per user. This is also where the "Only authorized users can publish blogs" requirement is actually enforced end-to-end: role changes here directly gate `requireAdminAccess`/`assertCanEditBlog` in the blog Server Actions from Phase 4.
 
 ---
 

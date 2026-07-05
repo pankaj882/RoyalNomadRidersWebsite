@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         create: {
           id: data.user.id,
           email: data.user.email!,
-          name: String(data.user.user_metadata?.name ?? data.user.email?.split("@")[0]),
+          name: String(data.user.user_metadata?.name as string | undefined) ?? data.user.email!.split("@")[0],
           role: "MEMBER",
         },
         update: {},

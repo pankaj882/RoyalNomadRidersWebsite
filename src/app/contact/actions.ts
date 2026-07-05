@@ -54,7 +54,7 @@ export async function submitContactAction(input: ContactInput): Promise<ActionRe
           type: NotificationType.CONTACT_SUBMISSION,
           title: "New Contact Message",
           message: `${name} sent a message: "${subject}"`,
-          link: `/admin/contact/${contact.id}`,
+          link: `/admin/contact`,
         })),
       });
     }

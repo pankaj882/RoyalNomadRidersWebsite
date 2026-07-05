@@ -1,22 +1,31 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { LayoutDashboard, Image as ImageIcon, Newspaper, CalendarDays, Users, LogOut } from "lucide-react";
+import { LayoutDashboard, Image as ImageIcon, Newspaper, CalendarDays, Users, Mail, LogOut } from "lucide-react";
 import { requireAdminAccess } from "@/lib/auth";
-import { roleLabels } from "@/lib/constants";
+import { roleLabels, SUPER_ADMIN_ROLES, MANAGEMENT_ROLES } from "@/lib/constants";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { NotificationBell } from "@/components/admin/notification-bell";
 import { getInitials, cn } from "@/lib/utils";
 import { logoutAction } from "@/app/(auth)/actions";
 
 const adminNav = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Gallery", href: "/admin/gallery", icon: ImageIcon },
-  { label: "Blog", href: "/admin/blog", icon: Newspaper },
-  { label: "Events", href: "/admin/events", icon: CalendarDays },
-  { label: "Users", href: "/admin/users", icon: Users },
+  { label: "Dashboard", href: "/admin", icon: LayoutDashboard, visibility: "all" },
+  { label: "Gallery", href: "/admin/gallery", icon: ImageIcon, visibility: "all" },
+  { label: "Blog", href: "/admin/blog", icon: Newspaper, visibility: "all" },
+  { label: "Events", href: "/admin/events", icon: CalendarDays, visibility: "management" },
+  { label: "Messages", href: "/admin/contact", icon: Mail, visibility: "management" },
+  { label: "Users", href: "/admin/users", icon: Users, visibility: "superAdmin" },
 ] as const;
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const user = await requireAdminAccess();
+  const isSuperAdmin = SUPER_ADMIN_ROLES.includes(user.role);
+  const isManagement = MANAGEMENT_ROLES.includes(user.role);
+  const visibleNav = adminNav.filter((item) => {
+    if (item.visibility === "superAdmin") return isSuperAdmin;
+    if (item.visibility === "management") return isManagement;
+    return true;
+  });
 
   return (
     <div className="grid min-h-screen grid-cols-1 bg-nomad-black lg:grid-cols-[260px_1fr]">
@@ -32,7 +41,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         </div>
 
         <nav className="flex flex-1 flex-col gap-1 p-4">
-          {adminNav.map((item) => {
+          {visibleNav.map((item) => {
             const Icon = item.icon;
             return (
               <Link
@@ -61,13 +70,17 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       </aside>
 
       <div className="flex flex-col">
-        <header className="flex items-center justify-between border-b border-nomad-steel bg-nomad-charcoal px-6 py-4 lg:hidden">
-          <p className="font-display text-lg text-nomad-white">Admin</p>
-          <form action={logoutAction}>
-            <button type="submit" className="text-sm text-red-400">
-              Sign Out
-            </button>
-          </form>
+        <header className="flex items-center justify-between border-b border-nomad-steel bg-nomad-charcoal px-6 py-4">
+          <p className="font-display text-lg text-nomad-white lg:hidden">Admin</p>
+          <div className="hidden lg:block" />
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <form action={logoutAction} className="lg:hidden">
+              <button type="submit" className="text-sm text-red-400">
+                Sign Out
+              </button>
+            </form>
+          </div>
         </header>
         <main className="flex-1 p-6 lg:p-10">{children}</main>
       </div>
