@@ -18,7 +18,6 @@ const serverEnvSchema = z.object({
   EMAIL_REPLY_TO: z.string().email().optional(),
   UPSTASH_REDIS_REST_URL: z.string().url().optional().or(z.literal("")),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
-  INSTAGRAM_ACCESS_TOKEN: z.string().optional(),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
@@ -35,7 +34,6 @@ function loadServerEnv(): ServerEnv {
     EMAIL_REPLY_TO: process.env.EMAIL_REPLY_TO,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
-    INSTAGRAM_ACCESS_TOKEN: process.env.INSTAGRAM_ACCESS_TOKEN,
   });
 
   if (!parsed.success) {

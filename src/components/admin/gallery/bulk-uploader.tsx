@@ -157,7 +157,7 @@ export function BulkUploader({ albumId, albumTitle }: BulkUploaderProps) {
         <div className="flex flex-col gap-2 rounded-lg border border-nomad-steel bg-nomad-charcoal p-4">
           {tasks.map((task, index) => (
             <div key={index} className="flex items-center justify-between gap-3 text-sm">
-              <span className="truncate text-nomad-fog">{task.file.name}</span>
+              <span className="min-w-0 flex-1 truncate text-nomad-fog">{task.file.name}</span>
               {task.status === "pending" && <span className="text-xs text-nomad-ash">Waiting...</span>}
               {task.status === "uploading" && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-nomad-red" />}
               {task.status === "done" && <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />}

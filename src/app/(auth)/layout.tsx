@@ -4,7 +4,10 @@ import { Logo } from "@/components/shared/logo";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-nomad-black px-4 py-16">
+    <main
+      id="main-content"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-nomad-black px-4 py-16"
+    >
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(200,30,44,0.12),transparent_45%),radial-gradient(circle_at_80%_80%,rgba(200,30,44,0.08),transparent_45%)]"
         aria-hidden="true"
@@ -22,6 +25,6 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 }

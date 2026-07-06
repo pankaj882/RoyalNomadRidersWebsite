@@ -42,6 +42,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       <section className="border-b border-nomad-steel bg-nomad-charcoal py-16 sm:py-20">
         <div className="container">
           <SectionHeading
+            as="h1"
             eyebrow="Saddle Up"
             title="Upcoming Rides"
             description="Every club ride, from weekend breakfast runs to multi-day mountain expeditions. Register below to lock in your seat."

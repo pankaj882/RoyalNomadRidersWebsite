@@ -7,7 +7,7 @@ import { RecentBlogsSection } from "@/components/home/recent-blogs-section";
 import { GalleryPreviewSection } from "@/components/home/gallery-preview-section";
 import { RideStatsSection } from "@/components/home/ride-stats-section";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
-import { InstagramFeedSection } from "@/components/home/instagram-feed-section";
+import { SocialFeedSection } from "@/components/home/social-feed-section";
 import { NewsletterSection } from "@/components/home/newsletter-section";
 import { SectionSkeleton } from "@/components/home/section-skeleton";
 import { buildMetadata } from "@/lib/seo";
@@ -53,9 +53,7 @@ export default function HomePage() {
         <TestimonialsSection />
       </Suspense>
 
-      <Suspense fallback={<SectionSkeleton heightClassName="h-72" />}>
-        <InstagramFeedSection />
-      </Suspense>
+      <SocialFeedSection />
 
       <NewsletterSection />
     </>

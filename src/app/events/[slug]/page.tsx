@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { FallbackImage } from "@/components/shared/fallback-image";
 import { notFound } from "next/navigation";
 import { CalendarDays, MapPin, Gauge, Clock, User, Users, Ban } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -76,7 +76,7 @@ export default async function EventPage({ params }: EventPageProps) {
       <script {...jsonLdScriptProps(eventJsonLd)} />
 
       <section className="relative flex min-h-[45vh] items-end overflow-hidden bg-nomad-black">
-        <Image src={event.coverImageUrl} alt={event.title} fill priority sizes="100vw" className="object-cover opacity-50" />
+        <FallbackImage src={event.coverImageUrl} alt={event.title} fill priority sizes="100vw" className="object-cover opacity-50" />
         <div className="absolute inset-0 bg-gradient-to-t from-nomad-black via-nomad-black/60 to-transparent" />
 
         <div className="container relative z-10 pb-12 pt-32">

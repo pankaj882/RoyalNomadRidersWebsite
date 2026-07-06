@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import dynamic from "next/dynamic";
 import { Loader2, Save, Send, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -18,8 +19,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CoverImageUploader } from "@/components/admin/blog/cover-image-uploader";
-import { RichTextEditor } from "@/components/admin/blog/rich-text-editor";
 import { blogSchema, type BlogInput } from "@/lib/validations/blog";
+
+// Tiptap is a substantial, browser-only dependency (ProseMirror + several
+// extensions) that's only ever used on two admin routes (new/edit post).
+// Dynamically importing it keeps it out of the initial admin bundle and out
+// of the server render entirely — `ssr: false` avoids the mismatch risk of
+// hydrating a contentEditable-based editor that has no meaningful server
+// representation anyway.
+const RichTextEditor = dynamic(
+  () => import("@/components/admin/blog/rich-text-editor").then((mod) => mod.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex min-h-[400px] items-center justify-center rounded-md border border-nomad-steel bg-nomad-charcoal">
+        <Loader2 className="h-6 w-6 animate-spin text-nomad-red" />
+      </div>
+    ),
+  }
+);
 import {
   createBlogAction,
   updateBlogAction,

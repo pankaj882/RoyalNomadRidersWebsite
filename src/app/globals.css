@@ -94,6 +94,24 @@
     text-wrap: balance;
   }
 
+  /* Global reduced-motion support: disables smooth scrolling and any CSS
+     (non-Framer-Motion) animations for users who've asked their OS to
+     minimize motion. Framer Motion's own reduced-motion handling lives in
+     AnimatedContainer (src/components/shared/animated-container.tsx). */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   /* Blog content typography — layered on top of Tailwind Typography's
      `prose prose-invert` so rendered blog posts (and the rich text editor
      itself) match the adventure red/charcoal palette instead of the

@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { AboutHero } from "@/components/about/about-hero";
 import { HistorySection } from "@/components/about/history-section";
 import { MissionVisionSection } from "@/components/about/mission-vision-section";
 import { SafetyGuidelinesSection } from "@/components/about/safety-guidelines-section";
 import { CoreMembersSection } from "@/components/about/core-members-section";
 import { TimelineSection } from "@/components/about/timeline-section";
-import { SectionSkeleton } from "@/components/home/section-skeleton";
 import { buildMetadata, buildBreadcrumbJsonLd, jsonLdScriptProps } from "@/lib/seo";
 import { siteConfig } from "@/lib/constants";
 
@@ -31,9 +29,7 @@ export default function AboutPage() {
       <HistorySection />
       <MissionVisionSection />
       <SafetyGuidelinesSection />
-      <Suspense fallback={<SectionSkeleton heightClassName="h-72" />}>
-        <CoreMembersSection />
-      </Suspense>
+      <CoreMembersSection />
       <TimelineSection />
     </>
   );

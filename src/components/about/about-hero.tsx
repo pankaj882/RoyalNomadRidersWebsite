@@ -1,11 +1,18 @@
-import Image from "next/image";
+import { FallbackImage } from "@/components/shared/fallback-image";
 import { AnimatedContainer } from "@/components/shared/animated-container";
 import { siteConfig } from "@/lib/constants";
 
 export function AboutHero() {
   return (
     <section className="relative flex min-h-[50vh] items-center overflow-hidden bg-nomad-black">
-      <Image
+      {/* FallbackImage (not next/image directly): if this hotlinked photo
+          fails to load — dead link, rate-limited, blocked in some network
+          environments — it unmounts itself instead of leaving the browser's
+          broken-image icon + visible alt text sitting in the corner. The
+          gradient below and the section's own bg-nomad-black keep the
+          layout looking intentional either way. Swap `src` for your own
+          uploaded photo before launch. */}
+      <FallbackImage
         src="https://images.unsplash.com/photo-1516053917400-643037c2bfe6?q=80&w=2400&auto=format&fit=crop"
         alt="Riders gathered around motorcycles at a mountain campsite"
         fill

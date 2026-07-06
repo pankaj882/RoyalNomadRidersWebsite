@@ -162,7 +162,6 @@ royal-nomad-riders/
 │   │   ├── constants.ts                # Site config, nav links, role labels
 │   │   ├── seo.ts                       # Metadata + JSON-LD builders
 │   │   ├── email.ts                      # Resend transactional email (registration confirmations)
-│   │   ├── instagram.ts                  # Instagram Graph API client
 │   │   ├── rate-limit.ts                  # Upstash-backed rate limiting with in-memory fallback
 │   │   ├── get-client-ip.ts                # Requester IP resolution for rate limiting
 │   │   ├── gallery-storage-shared.ts        # Client+server safe storage path/URL helpers
@@ -237,7 +236,7 @@ royal-nomad-riders/
 - [x] **Phase 4 — Blog:** Rich text editor, CRUD, categories, comments, likes — see [Phase 4 notes](#phase-4-notes).
 - [x] **Phase 5 — Events + Registration:** Event list, registration form, CSV export, confirmation email — see [Phase 5 notes](#phase-5-notes).
 - [x] **Phase 6 — Admin Dashboard:** Full stats, role management, unified CMS — see [Phase 6 notes](#phase-6-notes).
-- [ ] **Phase 7 — SEO/Performance Pass + Deployment Guide.**
+- [x] **Phase 7 — SEO/Performance Pass, Bug Fixes & Deployment Guide** — see [Phase 7 notes](#phase-7-notes).
 
 ---
 
@@ -245,7 +244,9 @@ royal-nomad-riders/
 
 **New pages:** `/` (full homepage), `/about`, `/contact` — all with `buildMetadata()` SEO + `BreadcrumbList`/`Organization`/`WebSite` JSON-LD.
 
-**Homepage sections** (`src/components/home/`), each an independent async Server Component reading live Prisma data with a graceful empty state when no content exists yet: Hero, Latest Ride, Upcoming Events, Recent Blogs, Gallery Preview, Ride Statistics, Testimonials, Instagram Feed, Newsletter CTA. Sections below the hero stream in via `<Suspense>` (see `src/components/home/section-skeleton.tsx`).
+**Homepage sections** (`src/components/home/`), each an independent async Server Component reading live Prisma data with a graceful empty state when no content exists yet: Hero, Latest Ride, Upcoming Events, Recent Blogs, Gallery Preview, Ride Statistics, Testimonials, Social Feed, Newsletter CTA. Sections below the hero stream in via `<Suspense>` (see `src/components/home/section-skeleton.tsx`).
+
+> **Updated in Phase 7:** the Social Feed section was originally an Instagram Graph API integration (server-side fetch, required an `INSTAGRAM_ACCESS_TOKEN`), then briefly a Curator.io widget embed, and is now a **LightWidget** embed (free tier — see [Phase 7 notes](#phase-7-notes) for details). The line above reflects the original Phase 2 implementation for historical accuracy; `src/components/home/social-feed-section.tsx` is the current version.
 
 **Schema additions** (`prisma/schema.prisma`):
 - `Testimonial` model — homepage social-proof section.
@@ -257,7 +258,7 @@ royal-nomad-riders/
 - Net effect: `/`, `/about`, and `/contact` are statically generated / ISR-revalidated (`export const revalidate = ...`), and the navbar's auth-aware UI hydrates a moment after first paint. `/admin/**` remains fully dynamic (it calls `requireAdminAccess()` server-side, which does need `cookies()` — appropriate, since dashboard content is inherently per-user and shouldn't be cached).
 
 **New shared library code:**
-- `src/lib/instagram.ts` — Instagram Graph API client (server-only, fails soft to an empty array + empty-state UI when `INSTAGRAM_ACCESS_TOKEN` isn't configured).
+- ~~`src/lib/instagram.ts` — Instagram Graph API client~~ **Removed in Phase 7** — replaced by a LightWidget embed (`src/components/home/social-feed-section.tsx`). See [Phase 7 notes](#phase-7-notes).
 - `src/lib/rate-limit.ts` — Upstash Redis rate limiting with an in-memory fallback for single-instance deployments; used by the contact form (5 submissions/hour/IP) and reused for event registration in Phase 5.
 - `src/lib/get-client-ip.ts` — resolves requester IP from proxy headers for rate limiting.
 - `src/lib/data/home.ts`, `src/lib/data/about.ts` — Prisma query functions kept separate from components (`server-only` guarded).
@@ -361,6 +362,75 @@ This means the public site is correct immediately even before the cron job ever 
 - **Role changes** — Super Admin, Admin, Blog Author, Member — with a hard server-side guard preventing a Super Admin from changing their *own* role or deactivating their *own* account (the classic "lock everyone out" footgun). The role select and deactivate button are simply disabled for your own row, and the server action re-checks it independently regardless of what the client sends.
 - **Deactivation, not deletion.** There's no "delete user" — `Blog.author`, `Comment.author`, `Registration.user`, `Album.createdBy`, `GalleryImage.uploadedBy`, and `Event.createdBy` are all required, non-nullable foreign keys to `User` without a cascade rule, so deleting a user with any content would either fail outright or silently orphan data depending on the relation. `isActive: false` is the safe equivalent — the account immediately loses the ability to sign in (already enforced by `getCurrentUser()`'s `isActive` check from Phase 1), while every post/comment/registration they've ever made stays intact and correctly attributed.
 - **About page display** — the `isFounder`/`founderTitle`/`displayOrder` fields added to `User` back in Phase 2 finally have an editing UI here, via a small dialog per user. This is also where the "Only authorized users can publish blogs" requirement is actually enforced end-to-end: role changes here directly gate `requireAdminAccess`/`assertCanEditBlog` in the blog Server Actions from Phase 4.
+
+---
+
+## Phase 7 Notes
+
+### Social feed: Instagram Graph API → LightWidget
+
+The homepage social feed no longer uses the Instagram Graph API. `src/lib/instagram.ts` (server-side fetch, required `INSTAGRAM_ACCESS_TOKEN`) has been **deleted** and replaced with `src/components/home/social-feed-section.tsx`, which embeds a **LightWidget** (lightwidget.com) widget instead:
+- LightWidget handles the Instagram integration entirely on their end — connect your account at lightwidget.com, no API token or refresh-token maintenance on our side at all.
+- It embeds as a plain iframe (`https://lightwidget.com/widgets/<WIDGET_ID>.html`) rather than a script-injected div, which is genuinely simpler and has nothing to load-order against the page's own LCP. Their optional `lightwidget.js` auto-resize script (loaded via `next/script` with `strategy="lazyOnload"`) keeps the iframe's height matched to its content instead of guessing a fixed height.
+- A centered spinner shows until the iframe's own `onLoad` fires.
+- Configure it with a single env var: `NEXT_PUBLIC_LIGHTWIDGET_ID` (see `.env.example`). Without it, the section shows a clear "not connected" empty state rather than breaking.
+- Free tier — no Instagram API token, no watermark removal paywall for basic display. (An initial version of this section briefly used Curator.io before switching to LightWidget at the person's request, since Curator's free tier didn't fit; both are third-party widget services with the same basic integration shape, so swapping again later, if ever needed, is a small, contained change to this one file.)
+
+### Bug fixes
+
+**Two overlapping navbars on `/admin`.** Root cause: `src/app/layout.tsx` unconditionally rendered the public `<Navbar />`/`<Footer />` around every route's children — including `/admin/**`, which has its own dedicated sidebar/header, and the `(auth)` login/register pages, which have their own centered-card layout. Fixed with `src/components/layout/site-chrome.tsx`, a client component that reads `usePathname()` and skips the public chrome entirely for `/admin/*` and the auth routes. (This is a client-side decision deliberately, not a server one — deciding in the root layout itself would require `headers()`/pathname access there, which would force every route in the app to render dynamically, undoing the ISR work from Phase 2.)
+
+**About page showing raw alt text in the corner.** The About page hero used a hotlinked `images.unsplash.com` URL; when it fails to load (dead link, rate limiting, or a network environment that blocks it), browsers fall back to rendering the `alt` attribute as visible text. Fixed two ways:
+1. `src/components/shared/fallback-image.tsx` — a small wrapper around `next/image` that unmounts itself on `onError` instead of leaving the broken-image icon + alt text visible. Applied to every full-bleed hero/cover image (`about-hero.tsx`, `home/hero-section.tsx`, `blog/[slug]/page.tsx`, `events/[slug]/page.tsx`) — each of those sections already has a solid/gradient background behind the image, so hiding a failed photo still looks intentional.
+2. Swap the placeholder Unsplash URLs in `about-hero.tsx` and `home/hero-section.tsx` for your own photos before launch — they're clearly marked with comments at each `src`.
+
+**Admin dashboard broken on mobile** (no way to navigate, cut-off tables, dialogs overflowing the viewport). This was several compounding issues in `src/app/admin/layout.tsx` and shared UI primitives, all fixed together:
+- **No mobile navigation existed at all** — the mobile header only had a title and a sign-out button; every other admin section (Gallery, Blog, Events, Users, Messages) was unreachable except by typing the URL directly. Fixed with `src/components/admin/admin-mobile-nav.tsx` (a Sheet-based menu) and `src/components/admin/admin-nav.tsx` (the nav link list, extracted so it's shared between the desktop sidebar and the mobile sheet — icon components can't be passed as props across the Server→Client boundary, so the nav config now lives in this one client component instead of being defined in the server-rendered layout).
+- **Missing `min-w-0` on the layout's flex/grid containers** — without it, any sufficiently wide child (a table, a long unbreakable string) can force the entire grid track wider than the viewport, causing the whole page to scroll horizontally rather than just the offending element. Added to the admin layout's root container and its main content column.
+- **`overflow-hidden` instead of `overflow-x-auto`** on the admin blog list's `<table>` wrapper (`src/app/admin/blog/page.tsx`) — this was clipping table content on narrow screens instead of letting it scroll. Fixed to match the pattern already used correctly elsewhere (`RegistrationsTable`, `UserTable`).
+- **Dialogs had no height cap or viewport margin** — `src/components/ui/dialog.tsx` now caps content at `max-h-[85vh]` with an internal scroll region (the close button stays pinned in the corner instead of scrolling away with tall content), and uses `w-[calc(100%-2rem)]` instead of `w-full` so it never touches the screen edges on narrow phones. This is a base-component fix, so every dialog in the app (contact message viewer, image caption editor, founder display editor, confirmation dialogs) benefits at once.
+- A handful of `truncate` labels that were missing `min-w-0` on their flex-item container (which silently defeats `text-overflow: ellipsis` in a flex row) were fixed in the bulk uploader's progress list and the gallery image caption overlay.
+
+### About page: Core Members section
+
+Added per your spec — profile photo, full name, designation/role, short description, and an Instagram handle + icon linking to their profile, in a responsive card grid with a subtle lift-and-glow hover effect.
+
+**Data source:** `src/lib/data/team-members.ts` — a plain, clearly-commented constants array. This is intentionally **not** wired to the database, so it renders immediately with zero setup; every field is placeholder data (see the TODO comment at the top of that file). Photos are generated initials avatars (ui-avatars.com) rather than stock photos of real people mislabeled as "team members" — swap in real uploaded photos when you have them.
+
+**Note — this supersedes, without deleting, Phase 6's admin-manageable version.** Phase 2/6 built a parallel, database-backed system for exactly this (`User.isFounder`/`founderTitle`/`displayOrder`, editable via the "About Page Display" dialog on `/admin/users`). That system is untouched and fully functional — it's just not what the About page reads from right now. If you'd rather let non-technical admins manage this from the dashboard instead of editing `team-members.ts`, that's a one-line swap in `core-members-section.tsx` (call `getCoreMembers()` from `src/lib/data/about.ts` instead of importing the constant) — full instructions are in that file's docblock.
+
+### Accessibility & motion
+
+- `AnimatedContainer` now checks `useReducedMotion()` (Framer Motion) and drops the vertical-lift transform for users who've asked their OS to reduce motion, keeping only a same-duration opacity fade.
+- `globals.css` adds a global `prefers-reduced-motion: reduce` media query that disables smooth scrolling and caps all CSS transition/animation durations near-zero, covering every hover/transition effect that isn't driven by Framer Motion.
+- Confirmed (carried over from earlier phases, verified during this pass): every page has exactly one `<h1>` — list pages without a separate hero component (`/gallery`, `/blog`, `/events`, `/contact`) pass `as="h1"` to the shared `SectionHeading` component instead of shipping zero `<h1>` tags.
+
+### Performance
+
+- **Vercel Analytics and Speed Insights** are now actually wired up (`@vercel/analytics`, `@vercel/speed-insights` in the root layout) — `NEXT_PUBLIC_VERCEL_ANALYTICS` has existed in `.env.example` since Phase 1 as a documented toggle but was never connected to anything until now. Both packages no-op harmlessly when not deployed on Vercel; set the env var to `"false"` to opt out explicitly.
+- Re-verified the ISR/SSG architecture established across Phases 2–5 is intact after the SiteChrome change: `/`, `/about`, `/gallery`, `/gallery/[slug]`, `/blog`, `/blog/[slug]`, `/events/[slug]`, and `/contact` still render without touching `cookies()`/`headers()` anywhere in their component tree (`SiteChrome`'s `usePathname()` check runs client-side, after the server-rendered HTML is already static/ISR-cached — it doesn't affect what gets prerendered).
+
+### Pre-launch checklist
+
+Things that need real assets/values before going live, none of which block local development:
+
+- [ ] Replace the placeholder hero photos in `about-hero.tsx` and `home/hero-section.tsx` with your own images.
+- [ ] Replace `src/lib/data/team-members.ts` with real Core Members (or switch to the DB-backed system — see that file's docblock).
+- [ ] Add real favicon/icon files to `public/` — `favicon.ico`, `favicon-16x16.png`, `apple-touch-icon.png`, `android-chrome-192x192.png`, `android-chrome-512x512.png` — referenced in `layout.tsx`/`site.webmanifest` but not generated by this build (no brand assets to generate them from).
+- [ ] Create a free widget at lightwidget.com and set `NEXT_PUBLIC_LIGHTWIDGET_ID`.
+- [ ] Set up Resend and set `RESEND_API_KEY`/`EMAIL_FROM`/`EMAIL_REPLY_TO` for registration confirmation emails.
+- [ ] Run `supabase/storage-policies.sql` in the Supabase SQL Editor (Phase 3).
+- [ ] Set `CRON_SECRET` identically in `.env` and Vercel's project environment variables (Phase 5).
+- [ ] Promote your own account to Super Admin and add real Testimonials, blog Categories, and the first Album/Event/Blog post — everything ships with graceful empty states until real content exists.
+- [ ] Submit `/sitemap.xml` to Google Search Console and verify ownership via `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`.
+- [ ] Run a Lighthouse pass against the deployed (not local dev) build — dev-mode Next.js is meaningfully slower than production and will under-report real scores.
+
+### Recommendations for future phases
+
+- Swap the Move Up/Down gallery-image reordering (Phase 3) for real drag-and-drop (`@dnd-kit`) if that UX matters more than the current keyboard-accessible, zero-touch-edge-case version.
+- Add a periodic cleanup job for orphaned blog content images in Storage (documented as a known limitation in Phase 4 notes).
+- Consider Partial Prerendering (Next.js PPR, still experimental as of this build) as a cleaner alternative to the manual "client-fetch to preserve ISR" pattern used for auth state, likes, and comments throughout — it would let those be server-rendered dynamic islands within an otherwise static page instead of separate client-side fetches.
+- Add automated tests (this build has none — it was produced without a live browser/build environment to run them against; Playwright is already available in the dev tooling ecosystem this project assumes).
 
 ---
 

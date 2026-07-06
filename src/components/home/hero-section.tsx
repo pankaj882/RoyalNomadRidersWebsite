@@ -1,14 +1,17 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatedContainer } from "@/components/shared/animated-container";
+import { FallbackImage } from "@/components/shared/fallback-image";
 import { siteConfig } from "@/lib/constants";
 
 export function HeroSection() {
   return (
     <section className="relative flex min-h-[92vh] items-center overflow-hidden bg-nomad-black">
-      <Image
+      {/* See FallbackImage's docblock — degrades gracefully instead of a
+          broken-image icon if this hotlinked demo photo fails to load.
+          Swap `src` for your own hero photo/video before launch. */}
+      <FallbackImage
         src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=2400&auto=format&fit=crop"
         alt="Adventure motorcycle riders crossing a mountain pass at sunrise"
         fill

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { FallbackImage } from "@/components/shared/fallback-image";
 import { notFound } from "next/navigation";
 import { CalendarDays, Clock, MapPin, Gauge, Bike } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -90,7 +90,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <article>
         <section className="relative flex min-h-[50vh] items-end overflow-hidden bg-nomad-black">
-          <Image
+          <FallbackImage
             src={blog.coverImageUrl}
             alt={blog.title}
             fill

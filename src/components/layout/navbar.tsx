@@ -134,7 +134,7 @@ export function Navbar() {
               <Menu className="h-5 w-5" />
             </button>
           </SheetTrigger>
-          <SheetContent side="right" className="flex w-4/5 flex-col">
+          <SheetContent side="right" className="flex w-4/5 flex-col overflow-y-auto">
             <SheetHeader>
               <SheetTitle>
                 <Logo />

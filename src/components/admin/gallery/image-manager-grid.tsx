@@ -96,7 +96,7 @@ export function ImageManagerGrid({ images }: ImageManagerGridProps) {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               {image.caption && (
-                <span className="truncate rounded bg-black/60 px-2 py-1 text-[0.65rem] text-white">
+                <span className="min-w-0 truncate rounded bg-black/60 px-2 py-1 text-[0.65rem] text-white">
                   {image.caption}
                 </span>
               )}

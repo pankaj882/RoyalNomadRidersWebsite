@@ -25,6 +25,7 @@ export default function ContactPage() {
       <section className="border-b border-nomad-steel bg-nomad-charcoal py-16 sm:py-20">
         <div className="container">
           <SectionHeading
+            as="h1"
             eyebrow="Get In Touch"
             title="Contact The Club"
             description="Questions about an upcoming ride, joining the club, or partnering with us? Reach out — a ride captain reads every message."

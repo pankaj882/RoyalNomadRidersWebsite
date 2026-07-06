@@ -6,6 +6,7 @@ export function MissionVisionSection() {
   return (
     <section className="border-y border-nomad-steel bg-nomad-charcoal py-20 sm:py-28">
       <div className="container">
+        <h2 className="sr-only">Our Mission and Vision</h2>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <AnimatedContainer className="flex flex-col gap-4 rounded-xl border border-nomad-steel bg-nomad-black p-8 sm:p-10">
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-nomad-red/10">

@@ -50,6 +50,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       <section className="border-b border-nomad-steel bg-nomad-charcoal py-16 sm:py-20">
         <div className="container">
           <SectionHeading
+            as="h1"
             eyebrow="From The Road"
             title="Ride Stories"
             description="Trip reports, gear reviews, and lessons learned — written by the riders who lived them."

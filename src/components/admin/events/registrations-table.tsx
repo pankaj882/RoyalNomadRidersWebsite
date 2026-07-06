@@ -19,7 +19,7 @@ const statusVariant = {
 export function RegistrationsTable({ eventId, registrations }: RegistrationsTableProps) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-nomad-white">
           <Users className="h-5 w-5 text-nomad-red" />
           Registrations ({registrations.length})

@@ -13,7 +13,6 @@ import type { AuthenticatedUser, Role } from "@/types";
  * database once.
  */
 export const getCurrentUser = cache(async (): Promise<AuthenticatedUser | null> => {
-  
   const supabase = await createClient();
   const {
     data: { user: supabaseUser },
@@ -34,7 +33,7 @@ export const getCurrentUser = cache(async (): Promise<AuthenticatedUser | null> 
     name: profile.name,
     avatarUrl: profile.avatarUrl,
     role: profile.role,
-  }
+  };
 });
 
 /** Redirects to /login (preserving the intended destination) if unauthenticated. */

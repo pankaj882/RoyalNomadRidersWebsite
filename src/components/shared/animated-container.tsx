@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
 
 interface AnimatedContainerProps {
@@ -21,6 +21,18 @@ const variants: Variants = {
   }),
 };
 
+// A user with `prefers-reduced-motion` enabled still gets a same-duration
+// opacity fade (so content doesn't just pop in instantly, which can be its
+// own jarring surprise) but never the vertical translate, which is the part
+// most likely to trigger vestibular discomfort.
+const reducedMotionVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    transition: { duration: 0.4, delay },
+  }),
+};
+
 /**
  * Fades + lifts content into view once, when it enters the viewport.
  * `viewport={{ once: true }}` ensures the animation never re-triggers on
@@ -33,6 +45,7 @@ export function AnimatedContainer({
   as = "div",
 }: AnimatedContainerProps) {
   const MotionTag = motion[as];
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <MotionTag
@@ -41,7 +54,7 @@ export function AnimatedContainer({
       whileInView="visible"
       viewport={{ once: true, margin: "-80px" }}
       custom={delay}
-      variants={variants}
+      variants={prefersReducedMotion ? reducedMotionVariants : variants}
     >
       {children}
     </MotionTag>
