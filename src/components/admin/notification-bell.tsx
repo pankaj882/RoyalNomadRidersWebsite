@@ -63,7 +63,7 @@ export function NotificationBell() {
         >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-nomad-red px-1 text-[0.6rem] font-bold text-white">
+            <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-nomad-gold px-1 text-[0.6rem] font-bold text-nomad-black">
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
@@ -76,7 +76,7 @@ export function NotificationBell() {
             <button
               type="button"
               onClick={handleMarkAllRead}
-              className="flex items-center gap-1 text-xs text-nomad-ash hover:text-nomad-red"
+              className="flex items-center gap-1 text-xs text-nomad-ash hover:text-nomad-gold"
             >
               <CheckCheck className="h-3.5 w-3.5" />
               Mark all read
@@ -93,12 +93,12 @@ export function NotificationBell() {
                 <div
                   className={cn(
                     "flex flex-col gap-0.5 rounded-md px-2 py-2.5 text-left transition-colors hover:bg-nomad-steel/50",
-                    !notification.isRead && "bg-nomad-red/5"
+                    !notification.isRead && "bg-nomad-gold/5"
                   )}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <span className="text-sm font-medium text-nomad-white">{notification.title}</span>
-                    {!notification.isRead && <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-nomad-red" />}
+                    {!notification.isRead && <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-nomad-gold" />}
                   </div>
                   <p className="text-xs text-nomad-ash">{notification.message}</p>
                   <span className="text-[0.65rem] text-nomad-ash/70">{formatDate(notification.createdAt)}</span>

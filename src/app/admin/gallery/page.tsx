@@ -32,7 +32,7 @@ export default async function AdminGalleryPage() {
 
       {albums.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-nomad-steel bg-nomad-charcoal/40 px-6 py-16 text-center">
-          <ImageIcon className="h-8 w-8 text-nomad-red" />
+          <ImageIcon className="h-8 w-8 text-nomad-gold" />
           <h3 className="font-display text-lg font-semibold text-nomad-white">No Albums Yet</h3>
           <p className="max-w-sm text-sm text-nomad-ash">
             Create your first album to start uploading ride photos.
@@ -66,7 +66,7 @@ export default async function AdminGalleryPage() {
                 </Link>
                 <div className="flex flex-1 flex-col gap-2 p-4">
                   <Link href={`/admin/gallery/${album.id}`}>
-                    <h3 className="font-display text-lg font-semibold text-nomad-white hover:text-nomad-red">
+                    <h3 className="font-display text-lg font-semibold text-nomad-white hover:text-nomad-gold">
                       {album.title}
                     </h3>
                   </Link>

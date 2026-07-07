@@ -24,14 +24,14 @@ export function HeroSection() {
 
       <div className="container relative z-10 pt-16">
         <AnimatedContainer className="max-w-3xl">
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-nomad-red/40 bg-nomad-red/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-nomad-red">
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-nomad-gold/40 bg-nomad-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-nomad-gold">
             <MapPin className="h-3.5 w-3.5" />
             Est. {siteConfig.founded} &middot; India
           </span>
           <h1 className="text-balance font-display text-5xl font-bold leading-[0.95] tracking-tight text-nomad-white sm:text-7xl lg:text-8xl">
             RIDE FAR.
             <br />
-            <span className="text-nomad-red">RIDE FREE.</span>
+            <span className="text-nomad-gold">RIDE FREE.</span>
           </h1>
           <p className="mt-6 max-w-xl text-balance text-base text-nomad-fog sm:text-lg">
             {siteConfig.description}
@@ -52,7 +52,7 @@ export function HeroSection() {
 
       <div className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 sm:flex">
         <span className="text-[0.65rem] uppercase tracking-[0.3em] text-nomad-ash">Scroll</span>
-        <span className="h-10 w-px animate-pulse bg-gradient-to-b from-nomad-red to-transparent" />
+        <span className="h-10 w-px animate-pulse bg-gradient-to-b from-nomad-gold to-transparent" />
       </div>
     </section>
   );

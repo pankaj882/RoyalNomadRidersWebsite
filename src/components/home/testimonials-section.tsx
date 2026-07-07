@@ -33,14 +33,14 @@ export async function TestimonialsSection() {
                 delay={index * 0.08}
                 className="flex flex-col gap-4 rounded-lg border border-nomad-steel bg-nomad-black p-6"
               >
-                <Quote className="h-6 w-6 text-nomad-red/60" aria-hidden="true" />
+                <Quote className="h-6 w-6 text-nomad-gold/60" aria-hidden="true" />
                 <p className="flex-1 text-sm text-nomad-fog">&ldquo;{testimonial.quote}&rdquo;</p>
                 <div className="flex items-center gap-0.5" aria-label={`${testimonial.rating} out of 5 stars`}>
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
                       className={`h-3.5 w-3.5 ${
-                        i < testimonial.rating ? "fill-nomad-red text-nomad-red" : "text-nomad-steel"
+                        i < testimonial.rating ? "fill-nomad-gold text-nomad-gold" : "text-nomad-steel"
                       }`}
                     />
                   ))}

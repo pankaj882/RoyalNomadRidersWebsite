@@ -78,7 +78,7 @@ export function LoginForm() {
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
-            <Link href="/forgot-password" className="text-xs text-nomad-ash hover:text-nomad-red">
+            <Link href="/forgot-password" className="text-xs text-nomad-ash hover:text-nomad-gold">
               Forgot password?
             </Link>
           </div>
@@ -101,7 +101,7 @@ export function LoginForm() {
 
       <p className="text-center text-sm text-nomad-ash">
         New to the club?{" "}
-        <Link href="/register" className="font-medium text-nomad-red hover:underline">
+        <Link href="/register" className="font-medium text-nomad-gold hover:underline">
           Create an account
         </Link>
       </p>

@@ -51,7 +51,7 @@ export function RegisterForm() {
   if (needsConfirmation) {
     return (
       <div className="flex flex-col items-center gap-4 py-4 text-center">
-        <MailCheck className="h-10 w-10 text-nomad-red" aria-hidden="true" />
+        <MailCheck className="h-10 w-10 text-nomad-gold" aria-hidden="true" />
         <h1 className="font-display text-xl font-bold text-nomad-white">Check your inbox</h1>
         <p className="text-sm text-nomad-ash">
           We&apos;ve sent a confirmation link to your email. Click it to activate your account and sign in.
@@ -139,7 +139,7 @@ export function RegisterForm() {
 
       <p className="text-center text-sm text-nomad-ash">
         Already a member?{" "}
-        <Link href="/login" className="font-medium text-nomad-red hover:underline">
+        <Link href="/login" className="font-medium text-nomad-gold hover:underline">
           Sign in
         </Link>
       </p>

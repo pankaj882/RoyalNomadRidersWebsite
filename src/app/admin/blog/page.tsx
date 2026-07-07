@@ -51,7 +51,7 @@ export default async function AdminBlogPage() {
 
       {blogs.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-nomad-steel bg-nomad-charcoal/40 px-6 py-16 text-center">
-          <FileText className="h-8 w-8 text-nomad-red" />
+          <FileText className="h-8 w-8 text-nomad-gold" />
           <h3 className="font-display text-lg font-semibold text-nomad-white">No Posts Yet</h3>
           <p className="max-w-sm text-sm text-nomad-ash">Write your first ride story to get started.</p>
           <Button asChild className="mt-2">
@@ -75,7 +75,7 @@ export default async function AdminBlogPage() {
               {blogs.map((blog) => (
                 <tr key={blog.id}>
                   <td className="max-w-xs px-4 py-3">
-                    <Link href={`/admin/blog/${blog.id}`} className="font-medium text-nomad-white hover:text-nomad-red">
+                    <Link href={`/admin/blog/${blog.id}`} className="font-medium text-nomad-white hover:text-nomad-gold">
                       {blog.title}
                     </Link>
                   </td>

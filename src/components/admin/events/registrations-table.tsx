@@ -21,13 +21,13 @@ export function RegistrationsTable({ eventId, registrations }: RegistrationsTabl
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-nomad-white">
-          <Users className="h-5 w-5 text-nomad-red" />
+          <Users className="h-5 w-5 text-nomad-gold" />
           Registrations ({registrations.length})
         </h2>
         <a
           href={`/api/admin/events/${eventId}/export`}
           download
-          className="flex items-center gap-2 rounded-md border border-nomad-steel px-3.5 py-2 text-sm font-medium text-nomad-fog transition-colors hover:border-nomad-red hover:text-nomad-red"
+          className="flex items-center gap-2 rounded-md border border-nomad-steel px-3.5 py-2 text-sm font-medium text-nomad-fog transition-colors hover:border-nomad-gold hover:text-nomad-gold"
         >
           <Download className="h-4 w-4" />
           Download CSV

@@ -31,7 +31,7 @@ export function BlogCard({ blog, priority = false }: BlogCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <h3 className="font-display text-lg font-semibold leading-snug text-nomad-white transition-colors group-hover:text-nomad-red">
+        <h3 className="font-display text-lg font-semibold leading-snug text-nomad-white transition-colors group-hover:text-nomad-gold">
           {blog.title}
         </h3>
         <p className="line-clamp-2 text-sm text-nomad-ash">{blog.excerpt}</p>

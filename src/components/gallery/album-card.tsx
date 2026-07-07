@@ -44,7 +44,7 @@ export function AlbumCard({ album, priority = false }: AlbumCardProps) {
       </div>
 
       <div className="flex flex-col gap-1.5 p-4">
-        <h3 className="font-display text-lg font-semibold text-nomad-white transition-colors group-hover:text-nomad-red">
+        <h3 className="font-display text-lg font-semibold text-nomad-white transition-colors group-hover:text-nomad-gold">
           {album.title}
         </h3>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-nomad-ash">

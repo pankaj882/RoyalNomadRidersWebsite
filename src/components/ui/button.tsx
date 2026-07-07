@@ -4,12 +4,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium tracking-wide transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nomad-red focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium tracking-wide transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nomad-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-nomad-red text-white shadow-sm hover:bg-nomad-red-dark active:bg-nomad-red-dark",
+          "bg-nomad-gold text-nomad-black shadow-sm hover:bg-nomad-gold-dark hover:text-white active:bg-nomad-gold-dark",
         outline:
           "border border-nomad-steel bg-transparent text-foreground hover:bg-nomad-steel/40 hover:border-nomad-ash",
         ghost: "text-foreground hover:bg-nomad-steel/40",
@@ -17,7 +17,7 @@ const buttonVariants = cva(
           "bg-nomad-steel text-foreground hover:bg-nomad-steel/80",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        link: "text-nomad-red underline-offset-4 hover:underline",
+        link: "text-nomad-gold underline-offset-4 hover:underline",
       },
       size: {
         default: "h-11 px-6 py-2",

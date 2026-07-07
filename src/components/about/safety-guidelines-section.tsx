@@ -23,8 +23,8 @@ export function SafetyGuidelinesSection() {
                 delay={index * 0.08}
                 className="flex flex-col gap-4 rounded-lg border border-nomad-steel bg-nomad-charcoal p-6"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-nomad-red/10">
-                  <Icon className="h-5 w-5 text-nomad-red" />
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-nomad-gold/10">
+                  <Icon className="h-5 w-5 text-nomad-gold" />
                 </span>
                 <h3 className="font-display text-lg font-semibold text-nomad-white">
                   {guideline.title}

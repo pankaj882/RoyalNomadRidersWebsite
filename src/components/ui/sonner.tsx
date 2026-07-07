@@ -15,7 +15,7 @@ function Toaster({ ...props }: ToasterProps) {
           toast:
             "group toast group-[.toaster]:bg-nomad-charcoal group-[.toaster]:text-foreground group-[.toaster]:border-nomad-steel group-[.toaster]:shadow-lg",
           description: "group-[.toast]:text-nomad-ash",
-          actionButton: "group-[.toast]:bg-nomad-red group-[.toast]:text-white",
+          actionButton: "group-[.toast]:bg-nomad-gold group-[.toast]:text-nomad-black",
           cancelButton: "group-[.toast]:bg-nomad-steel group-[.toast]:text-nomad-fog",
         },
       }}

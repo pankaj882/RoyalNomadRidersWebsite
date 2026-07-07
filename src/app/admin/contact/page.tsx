@@ -19,7 +19,7 @@ export default async function AdminContactPage() {
 
       {submissions.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-nomad-steel bg-nomad-charcoal/40 px-6 py-16 text-center">
-          <MailOpen className="h-8 w-8 text-nomad-red" />
+          <MailOpen className="h-8 w-8 text-nomad-gold" />
           <h3 className="font-display text-lg font-semibold text-nomad-white">No Messages Yet</h3>
           <p className="max-w-sm text-sm text-nomad-ash">
             Messages from the public contact form will appear here.

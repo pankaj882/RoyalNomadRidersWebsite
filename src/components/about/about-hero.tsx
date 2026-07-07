@@ -24,11 +24,11 @@ export function AboutHero() {
 
       <div className="container relative z-10 pt-16 text-center">
         <AnimatedContainer className="mx-auto max-w-2xl">
-          <span className="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.3em] text-nomad-red">
+          <span className="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.3em] text-nomad-gold">
             About The Club
           </span>
           <h1 className="font-display text-4xl font-bold leading-tight text-nomad-white sm:text-6xl">
-            Riders First. <span className="text-nomad-red">Always.</span>
+            Riders First. <span className="text-nomad-gold">Always.</span>
           </h1>
           <p className="mt-4 text-balance text-base text-nomad-fog sm:text-lg">
             The story, the people, and the principles behind {siteConfig.name}.

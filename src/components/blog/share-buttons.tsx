@@ -38,7 +38,7 @@ export function ShareButtons({ url, title }: ShareButtonsProps) {
         type="button"
         onClick={handleNativeShare}
         aria-label="Share this post"
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-nomad-steel text-nomad-fog transition-colors hover:border-nomad-red hover:text-nomad-red"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-nomad-steel text-nomad-fog transition-colors hover:border-nomad-gold hover:text-nomad-gold"
       >
         <Share2 className="h-4 w-4" />
       </button>
@@ -47,7 +47,7 @@ export function ShareButtons({ url, title }: ShareButtonsProps) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Share on WhatsApp"
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-nomad-steel text-nomad-fog transition-colors hover:border-nomad-red hover:text-nomad-red"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-nomad-steel text-nomad-fog transition-colors hover:border-nomad-gold hover:text-nomad-gold"
       >
         <MessageCircle className="h-4 w-4" />
       </a>
@@ -55,7 +55,7 @@ export function ShareButtons({ url, title }: ShareButtonsProps) {
         type="button"
         onClick={handleCopyLink}
         aria-label="Copy link"
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-nomad-steel text-nomad-fog transition-colors hover:border-nomad-red hover:text-nomad-red"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-nomad-steel text-nomad-fog transition-colors hover:border-nomad-gold hover:text-nomad-gold"
       >
         <Link2 className="h-4 w-4" />
       </button>

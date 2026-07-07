@@ -45,16 +45,16 @@ export function ContactInfo() {
             href={channel.href}
             target={channel.href.startsWith("http") ? "_blank" : undefined}
             rel={channel.href.startsWith("http") ? "noopener noreferrer" : undefined}
-            className="group flex items-center gap-4 rounded-lg border border-nomad-steel bg-nomad-charcoal p-4 transition-colors hover:border-nomad-red"
+            className="group flex items-center gap-4 rounded-lg border border-nomad-steel bg-nomad-charcoal p-4 transition-colors hover:border-nomad-gold"
           >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-nomad-red/10 text-nomad-red">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-nomad-gold/10 text-nomad-gold">
               <Icon className="h-5 w-5" />
             </span>
             <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-wide text-nomad-ash">
                 {channel.label}
               </p>
-              <p className="truncate text-sm font-medium text-nomad-white group-hover:text-nomad-red">
+              <p className="truncate text-sm font-medium text-nomad-white group-hover:text-nomad-gold">
                 {channel.value}
               </p>
             </div>

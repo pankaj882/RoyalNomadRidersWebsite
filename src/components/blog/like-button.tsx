@@ -81,11 +81,11 @@ export function LikeButton({ blogId, blogSlug, initialCount }: LikeButtonProps) 
       className={cn(
         "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors disabled:opacity-60",
         liked
-          ? "border-nomad-red bg-nomad-red/10 text-nomad-red"
-          : "border-nomad-steel text-nomad-fog hover:border-nomad-red hover:text-nomad-red"
+          ? "border-nomad-gold bg-nomad-gold/10 text-nomad-gold"
+          : "border-nomad-steel text-nomad-fog hover:border-nomad-gold hover:text-nomad-gold"
       )}
     >
-      <Heart className={cn("h-4 w-4", liked && "fill-nomad-red")} />
+      <Heart className={cn("h-4 w-4", liked && "fill-nomad-gold")} />
       {formatNumber(count)} {count === 1 ? "Like" : "Likes"}
     </button>
   );

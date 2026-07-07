@@ -20,7 +20,7 @@ function registrationConfirmationHtml(registration: Registration, event: Event):
   return `
   <div style="font-family: Arial, Helvetica, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
     <div style="background:#0A0A0B; padding: 24px; text-align:center;">
-      <span style="color:#C81E2C; font-size: 20px; font-weight: bold; letter-spacing: 2px;">
+      <span style="color:#C9A227; font-size: 20px; font-weight: bold; letter-spacing: 2px;">
         ${siteConfig.name.toUpperCase()}
       </span>
     </div>

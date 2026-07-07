@@ -33,7 +33,7 @@ export function ForgotPasswordForm() {
   if (submitted) {
     return (
       <div className="flex flex-col items-center gap-4 py-4 text-center">
-        <MailCheck className="h-10 w-10 text-nomad-red" aria-hidden="true" />
+        <MailCheck className="h-10 w-10 text-nomad-gold" aria-hidden="true" />
         <h1 className="font-display text-xl font-bold text-nomad-white">Check your inbox</h1>
         <p className="text-sm text-nomad-ash">
           If an account exists for that email, a password reset link is on its way.
@@ -75,7 +75,7 @@ export function ForgotPasswordForm() {
       </form>
 
       <p className="text-center text-sm text-nomad-ash">
-        <Link href="/login" className="font-medium text-nomad-red hover:underline">
+        <Link href="/login" className="font-medium text-nomad-gold hover:underline">
           Back to Sign In
         </Link>
       </p>

@@ -104,7 +104,7 @@ function SocialIcon({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-nomad-steel text-nomad-fog transition-colors hover:border-nomad-red hover:text-nomad-red"
+      className="flex h-9 w-9 items-center justify-center rounded-full border border-nomad-steel text-nomad-fog transition-colors hover:border-nomad-gold hover:text-nomad-gold"
     >
       {children}
     </a>

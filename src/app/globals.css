@@ -14,7 +14,7 @@
     --popover: 220 4% 8%;
     --popover-foreground: 60 5% 96%;
 
-    --primary: 353 68% 45%;
+    --primary: 45 68% 47%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 4% 15%;
@@ -23,7 +23,7 @@
     --muted: 220 4% 15%;
     --muted-foreground: 220 4% 60%;
 
-    --accent: 353 68% 45%;
+    --accent: 45 68% 47%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
@@ -31,7 +31,7 @@
 
     --border: 220 4% 18%;
     --input: 220 4% 18%;
-    --ring: 353 68% 45%;
+    --ring: 45 68% 47%;
 
     --radius: 0.5rem;
 
@@ -58,13 +58,13 @@
   }
 
   ::selection {
-    @apply bg-nomad-red text-white;
+    @apply bg-nomad-gold text-nomad-black;
   }
 
   /* Consistent focus ring across native interactive elements not covered by shadcn primitives. */
   a:focus-visible,
   button:focus-visible {
-    @apply outline-none ring-2 ring-nomad-red ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-nomad-gold ring-offset-2 ring-offset-background;
   }
 
   h1,
@@ -79,14 +79,14 @@
   /* Thin, brand-colored scrollbar for horizontally scrolling galleries/carousels. */
   .scrollbar-nomad {
     scrollbar-width: thin;
-    scrollbar-color: theme("colors.nomad.red.DEFAULT") transparent;
+    scrollbar-color: theme("colors.nomad.gold.DEFAULT") transparent;
   }
   .scrollbar-nomad::-webkit-scrollbar {
     height: 6px;
     width: 6px;
   }
   .scrollbar-nomad::-webkit-scrollbar-thumb {
-    background-color: theme("colors.nomad.red.DEFAULT");
+    background-color: theme("colors.nomad.gold.DEFAULT");
     border-radius: 999px;
   }
 
@@ -119,12 +119,12 @@
   .prose-nomad {
     --tw-prose-body: theme("colors.nomad.fog");
     --tw-prose-headings: theme("colors.nomad.white");
-    --tw-prose-links: theme("colors.nomad.red.bright");
+    --tw-prose-links: theme("colors.nomad.gold.bright");
     --tw-prose-bold: theme("colors.nomad.white");
-    --tw-prose-bullets: theme("colors.nomad.red.DEFAULT");
-    --tw-prose-counters: theme("colors.nomad.red.DEFAULT");
+    --tw-prose-bullets: theme("colors.nomad.gold.DEFAULT");
+    --tw-prose-counters: theme("colors.nomad.gold.DEFAULT");
     --tw-prose-quotes: theme("colors.nomad.fog");
-    --tw-prose-quote-borders: theme("colors.nomad.red.DEFAULT");
+    --tw-prose-quote-borders: theme("colors.nomad.gold.DEFAULT");
     --tw-prose-code: theme("colors.nomad.white");
     --tw-prose-pre-bg: theme("colors.nomad.black");
     --tw-prose-pre-code: theme("colors.nomad.fog");

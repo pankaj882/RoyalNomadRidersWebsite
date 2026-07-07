@@ -73,7 +73,7 @@ export function Navbar() {
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute -bottom-2 left-0 h-0.5 w-full bg-nomad-red" />
+                    <span className="absolute -bottom-2 left-0 h-0.5 w-full bg-nomad-gold" />
                   )}
                 </Link>
               </li>

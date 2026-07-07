@@ -25,10 +25,10 @@ export function TimelineSection() {
                     }`}
                   >
                     <span
-                      className="absolute left-4 top-1.5 h-3 w-3 -translate-x-1/2 rounded-full border-2 border-nomad-red bg-nomad-black sm:left-1/2"
+                      className="absolute left-4 top-1.5 h-3 w-3 -translate-x-1/2 rounded-full border-2 border-nomad-gold bg-nomad-black sm:left-1/2"
                       aria-hidden="true"
                     />
-                    <span className="text-xs font-bold uppercase tracking-[0.2em] text-nomad-red">
+                    <span className="text-xs font-bold uppercase tracking-[0.2em] text-nomad-gold">
                       {milestone.year}
                     </span>
                     <h3 className="font-display text-lg font-semibold text-nomad-white">

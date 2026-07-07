@@ -60,7 +60,7 @@ export function EventCoverUploader({ value, onChange, draftId }: EventCoverUploa
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={isUploading}
-          className="flex aspect-[16/9] w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-nomad-steel bg-nomad-charcoal/40 text-nomad-ash transition-colors hover:border-nomad-red hover:text-nomad-red disabled:pointer-events-none disabled:opacity-50"
+          className="flex aspect-[16/9] w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-nomad-steel bg-nomad-charcoal/40 text-nomad-ash transition-colors hover:border-nomad-gold hover:text-nomad-gold disabled:pointer-events-none disabled:opacity-50"
         >
           {isUploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ImagePlus className="h-6 w-6" />}
           <span className="text-sm font-medium">{isUploading ? "Uploading..." : "Upload Cover Image"}</span>

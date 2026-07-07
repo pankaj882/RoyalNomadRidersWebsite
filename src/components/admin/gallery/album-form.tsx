@@ -130,7 +130,7 @@ export function AlbumForm({ album }: AlbumFormProps) {
           type="checkbox"
           checked={isFeatured}
           onChange={(e) => setValue("isFeatured", e.target.checked)}
-          className="h-4 w-4 rounded border-nomad-steel accent-nomad-red"
+          className="h-4 w-4 rounded border-nomad-steel accent-nomad-gold"
         />
         <span className="text-sm text-nomad-fog">Feature this album on the public gallery page</span>
       </label>

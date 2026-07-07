@@ -1,11 +1,13 @@
 import type { ReactNode } from "react";
-import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { LogOut, Globe } from "lucide-react";
 import { requireAdminAccess } from "@/lib/auth";
 import { roleLabels, SUPER_ADMIN_ROLES, MANAGEMENT_ROLES } from "@/lib/constants";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { NotificationBell } from "@/components/admin/notification-bell";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { AdminMobileNav } from "@/components/admin/admin-mobile-nav";
+import { AdminBackButton } from "@/components/admin/admin-back-button";
 import { Logo } from "@/components/shared/logo";
 import { getInitials } from "@/lib/utils";
 import { logoutAction } from "@/app/(auth)/actions";
@@ -35,6 +37,16 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <AdminNav isSuperAdmin={isSuperAdmin} isManagement={isManagement} />
         </div>
 
+        <div className="border-t border-nomad-steel p-4">
+          <Link
+            href="/"
+            className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-nomad-fog transition-colors hover:bg-nomad-steel/50 hover:text-nomad-white"
+          >
+            <Globe className="h-4 w-4" />
+            Back to Website
+          </Link>
+        </div>
+
         <form action={logoutAction} className="border-t border-nomad-steel p-4">
           <button
             type="submit"
@@ -53,7 +65,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           which is what fixes the "two overlapping navbars" bug. */}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-nomad-steel bg-nomad-charcoal/95 px-4 backdrop-blur-sm sm:px-6">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-3">
+            <AdminBackButton />
             <AdminMobileNav
               userName={user.name}
               roleLabel={roleLabels[user.role]}

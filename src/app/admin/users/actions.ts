@@ -73,13 +73,16 @@ export async function updateFounderDisplayAction(
         isFounder: parsed.data.isFounder,
         founderTitle: parsed.data.founderTitle || null,
         displayOrder: parsed.data.displayOrder,
+        avatarUrl: parsed.data.avatarUrl || null,
+        bio: parsed.data.bio || null,
+        instagramHandle: parsed.data.instagramHandle || null,
       },
     });
 
     revalidatePath("/admin/users");
     revalidatePath("/about");
 
-    return { success: true, data: undefined, message: "About page display updated." };
+    return { success: true, data: undefined, message: "Profile updated." };
   } catch (error) {
     console.error("updateFounderDisplayAction failed:", error);
     return { success: false, error: "Something went wrong." };

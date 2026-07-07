@@ -147,25 +147,25 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <dl className="flex flex-col gap-3 text-sm">
                   {blog.location && (
                     <div className="flex items-center gap-2.5">
-                      <MapPin className="h-4 w-4 shrink-0 text-nomad-red" />
+                      <MapPin className="h-4 w-4 shrink-0 text-nomad-gold" />
                       <dd className="text-nomad-fog">{blog.location}</dd>
                     </div>
                   )}
                   {blog.motorcycle && (
                     <div className="flex items-center gap-2.5">
-                      <Bike className="h-4 w-4 shrink-0 text-nomad-red" />
+                      <Bike className="h-4 w-4 shrink-0 text-nomad-gold" />
                       <dd className="text-nomad-fog">{blog.motorcycle}</dd>
                     </div>
                   )}
                   {!!blog.distanceKm && (
                     <div className="flex items-center gap-2.5">
-                      <Gauge className="h-4 w-4 shrink-0 text-nomad-red" />
+                      <Gauge className="h-4 w-4 shrink-0 text-nomad-gold" />
                       <dd className="text-nomad-fog">{formatDistance(blog.distanceKm)}</dd>
                     </div>
                   )}
                   {blog.rideDate && (
                     <div className="flex items-center gap-2.5">
-                      <CalendarDays className="h-4 w-4 shrink-0 text-nomad-red" />
+                      <CalendarDays className="h-4 w-4 shrink-0 text-nomad-gold" />
                       <dd className="text-nomad-fog">{formatDate(blog.rideDate)}</dd>
                     </div>
                   )}

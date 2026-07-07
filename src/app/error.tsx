@@ -20,8 +20,8 @@ export default function GlobalError({
 
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center gap-6 px-4 text-center">
-      <span className="flex h-16 w-16 items-center justify-center rounded-full border border-nomad-red/40 bg-nomad-red/10">
-        <AlertTriangle className="h-8 w-8 text-nomad-red" aria-hidden="true" />
+      <span className="flex h-16 w-16 items-center justify-center rounded-full border border-nomad-gold/40 bg-nomad-gold/10">
+        <AlertTriangle className="h-8 w-8 text-nomad-gold" aria-hidden="true" />
       </span>
       <div>
         <h1 className="font-display text-3xl font-bold text-nomad-white">Something Went Wrong</h1>

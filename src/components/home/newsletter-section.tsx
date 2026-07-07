@@ -40,7 +40,7 @@ export function NewsletterSection() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-nomad-red py-20">
+    <section className="relative overflow-hidden bg-nomad-gold py-20">
       <div
         className="pointer-events-none absolute inset-0 opacity-10"
         style={{
@@ -51,13 +51,13 @@ export function NewsletterSection() {
       />
       <div className="container relative">
         <AnimatedContainer className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15">
-            <Mail className="h-6 w-6 text-white" />
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-nomad-black/15">
+            <Mail className="h-6 w-6 text-nomad-black" />
           </span>
-          <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
+          <h2 className="font-display text-3xl font-bold text-nomad-black sm:text-4xl">
             Never Miss A Ride
           </h2>
-          <p className="text-sm text-white/85 sm:text-base">
+          <p className="text-sm text-nomad-black/80 sm:text-base">
             Trip announcements, gear tips, and ride reports — straight to your inbox. No spam,
             unsubscribe anytime.
           </p>
@@ -70,20 +70,20 @@ export function NewsletterSection() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               aria-label="Email address"
-              className="h-12 border-white/30 bg-white/10 text-white placeholder:text-white/60 focus-visible:ring-white"
+              className="h-12 border-nomad-black/30 bg-nomad-black/10 text-nomad-black placeholder:text-nomad-black/60 focus-visible:ring-nomad-black"
             />
             <Button
               type="submit"
               size="lg"
               disabled={status === "loading"}
-              className="bg-nomad-black hover:bg-nomad-black/80"
+              className="bg-nomad-black text-white hover:bg-nomad-black/80"
             >
               {status === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
               Subscribe
             </Button>
           </form>
           {message && (
-            <p role="status" className="text-sm text-white/90">
+            <p role="status" className="text-sm text-nomad-black/90">
               {message}
             </p>
           )}

@@ -39,7 +39,7 @@ export function SocialFeedSection() {
             href={siteConfig.links.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sm font-medium text-nomad-red hover:underline"
+            className="flex items-center gap-2 text-sm font-medium text-nomad-gold hover:underline"
           >
             <Instagram className="h-4 w-4" />
             Follow on Instagram
@@ -59,7 +59,7 @@ export function SocialFeedSection() {
                 className="flex min-h-[280px] items-center justify-center rounded-lg border border-dashed border-nomad-steel bg-nomad-charcoal/40"
                 aria-hidden="true"
               >
-                <Loader2 className="h-6 w-6 animate-spin text-nomad-red" />
+                <Loader2 className="h-6 w-6 animate-spin text-nomad-gold" />
               </div>
             )}
 

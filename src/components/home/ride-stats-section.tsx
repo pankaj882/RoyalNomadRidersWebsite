@@ -19,7 +19,7 @@ export async function RideStatsSection() {
         className="pointer-events-none absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(45deg, #C81E2C 0, #C81E2C 1px, transparent 1px, transparent 12px)",
+            "repeating-linear-gradient(45deg, #C9A227 0, #C9A227 1px, transparent 1px, transparent 12px)",
         }}
         aria-hidden="true"
       />
@@ -33,7 +33,7 @@ export async function RideStatsSection() {
                 delay={index * 0.1}
                 className="flex flex-col items-center gap-3 text-center"
               >
-                <Icon className="h-6 w-6 text-nomad-red" aria-hidden="true" />
+                <Icon className="h-6 w-6 text-nomad-gold" aria-hidden="true" />
                 <span className="font-display text-4xl font-bold text-nomad-white sm:text-5xl">
                   {item.value}
                 </span>

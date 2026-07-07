@@ -68,7 +68,7 @@ function PageLink({
       href={href}
       className={cn(
         "flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium text-nomad-fog transition-colors hover:bg-nomad-steel",
-        isActive && "bg-nomad-red text-white hover:bg-nomad-red"
+        isActive && "bg-nomad-gold text-nomad-black hover:bg-nomad-gold"
       )}
       {...rest}
     >

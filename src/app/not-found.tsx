@@ -15,11 +15,11 @@ export default function NotFound() {
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center gap-6 px-4 text-center">
       <span className="flex h-16 w-16 items-center justify-center rounded-full border border-nomad-steel bg-nomad-charcoal">
-        <Compass className="h-8 w-8 text-nomad-red" aria-hidden="true" />
+        <Compass className="h-8 w-8 text-nomad-gold" aria-hidden="true" />
       </span>
       <div>
         <h1 className="font-display text-3xl font-bold text-nomad-white">
-          <span className="text-nomad-red">404</span> — Off The Map
+          <span className="text-nomad-gold">404</span> — Off The Map
         </h1>
         <p className="mt-2 max-w-md text-sm text-nomad-ash">
           Looks like this trail doesn&apos;t exist. Let&apos;s get you back on route.

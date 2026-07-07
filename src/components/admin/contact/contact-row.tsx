@@ -72,11 +72,11 @@ export function ContactRow({ contact }: { contact: Contact }) {
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap items-center gap-4 text-sm text-nomad-ash">
-              <a href={`mailto:${contact.email}`} className="flex items-center gap-1.5 hover:text-nomad-red">
+              <a href={`mailto:${contact.email}`} className="flex items-center gap-1.5 hover:text-nomad-gold">
                 <Mail className="h-3.5 w-3.5" /> {contact.email}
               </a>
               {contact.phone && (
-                <a href={`tel:${contact.phone}`} className="flex items-center gap-1.5 hover:text-nomad-red">
+                <a href={`tel:${contact.phone}`} className="flex items-center gap-1.5 hover:text-nomad-gold">
                   <Phone className="h-3.5 w-3.5" /> {contact.phone}
                 </a>
               )}

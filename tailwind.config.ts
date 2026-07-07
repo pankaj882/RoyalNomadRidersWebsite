@@ -59,7 +59,7 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Royal Nomad Riders brand palette
+        // Royal Nomad Riders brand palette — black & gold, matching the club's crest logo
         nomad: {
           black: "#0A0A0B",
           charcoal: "#141416",
@@ -68,10 +68,10 @@ const config: Config = {
           ash: "#8A8D93",
           fog: "#C7C9CE",
           white: "#F5F5F3",
-          red: {
-            DEFAULT: "#C81E2C",
-            dark: "#8F1420",
-            bright: "#E32636",
+          gold: {
+            DEFAULT: "#C9A227",
+            dark: "#8A6F1C",
+            bright: "#E8C750",
           },
         },
       },

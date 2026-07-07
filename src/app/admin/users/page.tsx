@@ -13,8 +13,8 @@ export default async function AdminUsersPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-nomad-red/10">
-          <UsersIcon className="h-5 w-5 text-nomad-red" />
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-nomad-gold/10">
+          <UsersIcon className="h-5 w-5 text-nomad-gold" />
         </span>
         <div>
           <h1 className="font-display text-3xl font-bold text-nomad-white">Users</h1>

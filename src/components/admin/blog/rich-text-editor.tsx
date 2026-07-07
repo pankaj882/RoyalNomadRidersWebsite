@@ -61,7 +61,7 @@ function ToolbarButton({
       aria-pressed={isActive}
       className={cn(
         "flex h-8 w-8 items-center justify-center rounded-md text-nomad-fog transition-colors hover:bg-nomad-steel disabled:pointer-events-none disabled:opacity-40",
-        isActive && "bg-nomad-red/20 text-nomad-red"
+        isActive && "bg-nomad-gold/20 text-nomad-gold"
       )}
     >
       {children}
@@ -204,7 +204,7 @@ export function RichTextEditor({ value, onChange, draftId, placeholder }: RichTe
   if (!editor) {
     return (
       <div className="flex min-h-[400px] items-center justify-center rounded-md border border-nomad-steel bg-nomad-charcoal">
-        <Loader2 className="h-6 w-6 animate-spin text-nomad-red" />
+        <Loader2 className="h-6 w-6 animate-spin text-nomad-gold" />
       </div>
     );
   }

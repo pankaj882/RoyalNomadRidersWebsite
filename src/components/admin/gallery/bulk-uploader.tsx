@@ -132,10 +132,10 @@ export function BulkUploader({ albumId, albumTitle }: BulkUploaderProps) {
         onDrop={handleDrop}
         className={cn(
           "flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-10 text-center transition-colors",
-          isDragging ? "border-nomad-red bg-nomad-red/5" : "border-nomad-steel bg-nomad-charcoal/40"
+          isDragging ? "border-nomad-gold bg-nomad-gold/5" : "border-nomad-steel bg-nomad-charcoal/40"
         )}
       >
-        <UploadCloud className="h-8 w-8 text-nomad-red" />
+        <UploadCloud className="h-8 w-8 text-nomad-gold" />
         <div>
           <p className="text-sm font-medium text-nomad-white">Drag & drop photos here</p>
           <p className="text-xs text-nomad-ash">JPEG, PNG, WebP, or AVIF · up to 15MB each · up to 50 at once</p>
@@ -159,7 +159,7 @@ export function BulkUploader({ albumId, albumTitle }: BulkUploaderProps) {
             <div key={index} className="flex items-center justify-between gap-3 text-sm">
               <span className="min-w-0 flex-1 truncate text-nomad-fog">{task.file.name}</span>
               {task.status === "pending" && <span className="text-xs text-nomad-ash">Waiting...</span>}
-              {task.status === "uploading" && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-nomad-red" />}
+              {task.status === "uploading" && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-nomad-gold" />}
               {task.status === "done" && <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />}
               {task.status === "error" && (
                 <span className="flex shrink-0 items-center gap-1.5 text-xs text-red-400">

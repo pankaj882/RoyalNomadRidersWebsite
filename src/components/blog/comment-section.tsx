@@ -35,7 +35,7 @@ export function CommentSection({ blogId, blogSlug }: CommentSectionProps) {
   return (
     <div className="flex flex-col gap-6">
       <h2 className="flex items-center gap-2 font-display text-2xl font-bold text-nomad-white">
-        <MessageSquare className="h-5 w-5 text-nomad-red" />
+        <MessageSquare className="h-5 w-5 text-nomad-gold" />
         Comments {comments !== null && `(${totalCount})`}
       </h2>
 

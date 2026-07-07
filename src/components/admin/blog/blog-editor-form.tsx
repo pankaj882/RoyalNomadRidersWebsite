@@ -33,7 +33,7 @@ const RichTextEditor = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex min-h-[400px] items-center justify-center rounded-md border border-nomad-steel bg-nomad-charcoal">
-        <Loader2 className="h-6 w-6 animate-spin text-nomad-red" />
+        <Loader2 className="h-6 w-6 animate-spin text-nomad-gold" />
       </div>
     ),
   }

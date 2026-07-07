@@ -40,11 +40,11 @@ export async function LatestRideSection() {
 
               <div className="flex flex-col justify-center gap-5 p-8 lg:p-12">
                 {ride.category && (
-                  <span className="text-xs font-semibold uppercase tracking-[0.25em] text-nomad-red">
+                  <span className="text-xs font-semibold uppercase tracking-[0.25em] text-nomad-gold">
                     {ride.category.name}
                   </span>
                 )}
-                <h3 className="font-display text-2xl font-bold leading-tight text-nomad-white transition-colors group-hover:text-nomad-red sm:text-3xl">
+                <h3 className="font-display text-2xl font-bold leading-tight text-nomad-white transition-colors group-hover:text-nomad-gold sm:text-3xl">
                   {ride.title}
                 </h3>
                 <p className="line-clamp-3 text-sm text-nomad-ash sm:text-base">{ride.excerpt}</p>

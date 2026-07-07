@@ -202,7 +202,7 @@ export function EventForm({ event }: EventFormProps) {
               type="checkbox"
               checked={registrationOpen}
               onChange={(e) => setValue("registrationOpen", e.target.checked)}
-              className="h-4 w-4 rounded border-nomad-steel accent-nomad-red"
+              className="h-4 w-4 rounded border-nomad-steel accent-nomad-gold"
             />
             <span className="text-sm text-nomad-fog">Registration open</span>
           </label>

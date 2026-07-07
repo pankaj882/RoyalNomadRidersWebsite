@@ -17,7 +17,7 @@ export function EmptyState({ icon: Icon, title, description, className }: EmptyS
       )}
     >
       <span className="flex h-12 w-12 items-center justify-center rounded-full bg-nomad-steel/40">
-        <Icon className="h-6 w-6 text-nomad-red" aria-hidden="true" />
+        <Icon className="h-6 w-6 text-nomad-gold" aria-hidden="true" />
       </span>
       <h3 className="font-display text-lg font-semibold text-nomad-white">{title}</h3>
       <p className="max-w-sm text-sm text-nomad-ash">{description}</p>

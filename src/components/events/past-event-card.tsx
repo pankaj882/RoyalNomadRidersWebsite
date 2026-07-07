@@ -24,7 +24,7 @@ export function PastEventCard({ event }: PastEventCardProps) {
         </Badge>
       </div>
       <div className="flex flex-col gap-2 p-5">
-        <h3 className="font-display text-lg font-semibold text-nomad-white group-hover:text-nomad-red">
+        <h3 className="font-display text-lg font-semibold text-nomad-white group-hover:text-nomad-gold">
           {event.title}
         </h3>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-nomad-ash">

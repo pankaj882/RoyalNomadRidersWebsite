@@ -78,7 +78,7 @@ export default async function AdminDashboardPage() {
                   <CardTitle className="text-xs font-semibold uppercase tracking-wide text-nomad-ash">
                     {stat.label}
                   </CardTitle>
-                  <Icon className="h-4 w-4 text-nomad-red" />
+                  <Icon className="h-4 w-4 text-nomad-gold" />
                 </CardHeader>
                 <CardContent>
                   <p className="font-display text-3xl font-bold text-nomad-white">{formatNumber(stat.value)}</p>
@@ -178,7 +178,7 @@ export default async function AdminDashboardPage() {
                 <Link
                   key={blog.id}
                   href={`/admin/blog/${blog.id}`}
-                  className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 hover:text-nomad-red"
+                  className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 hover:text-nomad-gold"
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-nomad-white">{blog.title}</p>

@@ -40,7 +40,7 @@ export default async function AdminEventsPage() {
 
       {events.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-nomad-steel bg-nomad-charcoal/40 px-6 py-16 text-center">
-          <CalendarDays className="h-8 w-8 text-nomad-red" />
+          <CalendarDays className="h-8 w-8 text-nomad-gold" />
           <h3 className="font-display text-lg font-semibold text-nomad-white">No Rides Yet</h3>
           <p className="max-w-sm text-sm text-nomad-ash">Create the first ride to open registrations.</p>
           <Button asChild className="mt-2">
@@ -62,7 +62,7 @@ export default async function AdminEventsPage() {
               </Link>
               <div className="flex flex-1 flex-col gap-2 p-4">
                 <Link href={`/admin/events/${event.id}`}>
-                  <h3 className="font-display text-lg font-semibold text-nomad-white hover:text-nomad-red">
+                  <h3 className="font-display text-lg font-semibold text-nomad-white hover:text-nomad-gold">
                     {event.title}
                   </h3>
                 </Link>

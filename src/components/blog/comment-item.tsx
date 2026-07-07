@@ -43,7 +43,7 @@ export function CommentItem({ comment, blogId, blogSlug, onChanged }: CommentIte
           <button
             type="button"
             onClick={() => setIsReplying((v) => !v)}
-            className="flex items-center gap-1.5 text-xs text-nomad-ash hover:text-nomad-red"
+            className="flex items-center gap-1.5 text-xs text-nomad-ash hover:text-nomad-gold"
           >
             <MessageCircle className="h-3.5 w-3.5" />
             Reply
